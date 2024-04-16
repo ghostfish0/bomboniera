@@ -18,11 +18,14 @@ body {
 }
 
 h1 {
-  margin-top: 0;
+  float: left;
+  margin-top: 5px;
+  margin-bottom: 10px;
 }
 
 label {
   font-size: 0.8em;
+  margin-bottom: 5px;
 }
 
 p {
@@ -56,13 +59,13 @@ th div {
 }
 
 #control {
-  min-width: 25vw;
+  width: 35vw;
   display: flex;
   flex-direction: column;
 }
 
 #control input {
-  margin-bottom: 10px;
+  margin: 5px 0;
   cursor: pointer;
 }
 
@@ -72,7 +75,6 @@ th div {
 }
 
 #main {
-  flex-grow: 1;
   overflow-x: auto;
   white-space: nowrap;
   /* justify-content: center; */
@@ -102,3 +104,8 @@ th div {
   border: 3px dotted #666;
 }
 
+#tips {
+  position: fixed;
+  bottom: 5px;
+  left: 5px;
+}
