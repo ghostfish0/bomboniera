@@ -1,13 +1,12 @@
 from __future__ import print_function
 from ortools.sat.python import cp_model
-import time
 import pandas as pd
 import numpy as np
 
-def allocate_secondi(name, capacitystr, choicesstr, sheetstr): 
-    capacity=pd.read_excel('residence_allocation_data.xlsx', index_col=0, sheet_name=capacitystr)
+def allocate_secondi(name, capacitystr, choicesstr): 
+    capacity=pd.read_excel('./residence_allocation_data.xlsx', index_col=0, sheet_name=capacitystr)
     capacity=capacity.reset_index()
-    choices=pd.read_excel('residence_allocation_data.xlsx', index_col=0, sheet_name=choicesstr)
+    choices=pd.read_excel('./residence_allocation_data.xlsx', index_col=0, sheet_name=choicesstr)
     choices = choices.sample(frac=1).reset_index(drop=True)
     choices=choices.reset_index()
 
@@ -34,7 +33,6 @@ def allocate_secondi(name, capacitystr, choicesstr, sheetstr):
     sizes=sizes.astype(int)
 
     model = cp_model.CpModel()
-    start = time.time()
 
     num_workers = len(cost)
     num_tasks = len(cost[1])
@@ -46,8 +44,7 @@ def allocate_secondi(name, capacitystr, choicesstr, sheetstr):
         for j in range(num_tasks):
             t.append(model.NewIntVar(0, 1, "x[%i,%i]" % (i, j)))
         x.append(t)
-    x_array = [x[i][j] for i in range(num_workers) for j in 
-    range(num_tasks)]
+    # x_array = [x[i][j] for i in range(num_workers) for j in range(num_tasks)]
 
     # Constraints
     # Each residence can be allocated no more students than its capacity.
@@ -56,7 +53,7 @@ def allocate_secondi(name, capacitystr, choicesstr, sheetstr):
 
     # Each student can only be allocated to 1 residence.
     [model.Add(sum(x[i][j] for j in range(num_tasks)) == 1)
-    for i in range(num_workers)]
+    for i in range(num_workers)] 
 
     model.Minimize(sum([np.dot(x_row, cost_row) for (x_row, cost_row) in 
     zip(x, cost)]))
@@ -65,6 +62,7 @@ def allocate_secondi(name, capacitystr, choicesstr, sheetstr):
     status = solver.Solve(model)
 
     output_data = []
+    output_str = ''
 
     for j in range(num_tasks):
         task_output = []
@@ -74,16 +72,13 @@ def allocate_secondi(name, capacitystr, choicesstr, sheetstr):
                 task_output.append((choices.loc[i,'student'] + ' ' + str(num_tasks - cost[i][j])))
         output_data.append(task_output)
 
-    end = time.time()
-
     if status == cp_model.OPTIMAL:
-        print(name, 'Total satisfaction = ', num_tasks * num_workers - int(solver.ObjectiveValue()), ', Theoretical satisfaction = ', num_tasks * num_workers)
+        output_str = name + 'Total satisfaction = ' + str(num_tasks * num_workers - int(solver.ObjectiveValue())) + ', Optimal solution'
+    else:
+        output_str = name + 'No solutions found'
 
     # Convert the output data to a DataFrame and write it to an Excel file
     df = pd.DataFrame(output_data)
     df = df.T
-    df.to_csv("secondi.csv", mode='a', header=False, index=False, sep='\t', encoding='utf-8')
-
-if __name__ == '__main__':
-    allocate_secondi('Secondi allocated: ', 'capacity_male',   'secondi_choices_male', 'secondi')
-    allocate_secondi('Seconde allocated: ', 'capacity_female', 'secondi_choices_female', 'seconde')
+    return df, output_str
+    # df.to_csv("secondi.tsv", mode='a', header=False, index=False, sep='\t', encoding='utf-8')

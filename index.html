@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>CANDYBOX: Residence Allocator</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="css/base16.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+  <body>
+    <div class="flex-container">
+      <div class="flex-item" id="control">
+          <div>
+            <h1> CANDYBOX </h1>
+            <input type="button" name="run" value="ALLOCATE >:)" id="run">
+          </div>
+          <input type="button" name="excel" value="Export to XLSX" id="excel">
+          <input type="button" name="csv" value="Export to CSV" id="csv">
+          <div>
+            <input id="manual" type="checkbox" name="manual" value="">
+            <label for="manual">Manual mode </label>
+          </div>
+          <div>
+            <h4>Statistics</h4>
+            <p>Happiness: <span id="happiness-score">n/a</span> pts</p>
+            <p>Diveristy: <span id="diversity-score">n/a</span> pts</p>
+            <input type="button" name="clipboard" value="Copy to clipboard" id="clipboard">
+          </div>
+      </div>
+      <div class="flex-item" id="main">
+      </div>
+    </div>
+    <script src="./js/index.js"> </script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.2/FileSaver.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> -->
+  </body>
+</html>
