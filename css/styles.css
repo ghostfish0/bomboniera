@@ -34,6 +34,7 @@ p {
 
 table {
   min-width: 100%;
+  margin-right: 100px;
 }
 
 table,td {
@@ -50,6 +51,7 @@ th div {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
+  min-width: 96vw;
 }
 
 .flex-container > div {
@@ -78,6 +80,7 @@ th div {
   overflow-x: auto;
   white-space: nowrap;
   /* justify-content: center; */
+  flex-grow: 1;
 }
 
 #main div {

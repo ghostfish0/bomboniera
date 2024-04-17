@@ -2,7 +2,7 @@ var context = document.getElementById('diversity-chart').getContext('2d');
 var chart = new Chart(context, {
   type: 'bar',
   data: {
-    labels: ['OO', 'FORE', 'PALA', 'PLES', 'SHOL', 'PURN', 'LUCC'],
+    labels: data[0],
     datasets: [
       {
         label: 'worst',

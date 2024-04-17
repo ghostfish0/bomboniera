@@ -3,6 +3,10 @@ function generateTable(data) {
   for (let i = 1; i < data.length; i++) {
     html += '<tr>';
     for (let j = 0; j < data[i].length; j++) {
+      if (data[i][j] === '') {
+        html += '<td></td>';
+        continue;
+      }
       html += '<td><div title=' + '\'' + data[i][j] + '\'' + '>' + data[i][j] + '</div></td>';
     }
     html += '</tr>';
