@@ -1,25 +1,60 @@
 const data = [
   ['OO', 'FORE', 'PALA', 'PURN', 'LUCC', 'SHOL', 'PLES'],
-  ['Female45', 'Female24', 'Female3', 'Female33', 'Female18', 'Female53', 'Female47'],
-  ['Female46', 'Female55', 'Female2', 'Female5', 'Female17', 'Female36', 'Female48'],
-  ['Female29', 'Female52', 'Female6', 'Female38', 'Female13', 'Female40', 'Female50'],
-  ['Male12', 'Female56', 'Female20', 'Female21', 'Female42', 'Female15', 'Female8'],
-  ['Male33', 'Female35', 'Female16', 'Female27', 'Female34', 'Female37', 'Female11'],
-  ['Male29', 'Female9', 'Female4', 'Female54', 'Female19', 'Female12', 'Female44'],
-  ['', 'Female25', 'Female32', 'Female30', 'Female51', 'Female31', 'Female7'],
-  ['', 'Female39', 'Female14', 'Male32', 'Female43', 'Female22', 'Female49'],
-  ['', 'Male15', 'Female28', 'Male4', 'Female23'],
-  ['', 'Male34', 'Female41', 'Male28', 'Female10'],
-  ['', 'Male35', 'Female26', 'Male2', 'Male11'],
-  ['', 'Male9', 'Female1', 'Male23', 'Male19'],
-  ['', 'Male5', 'Male31', 'Male10', 'Male17'],
-  ['', 'Male24', 'Male20'],
-  ['', 'Male25', 'Male18'],
-  ['', 'Male27', 'Male1'],
-  ['', 'Male7', 'Male6'],
-  ['', 'Male8', 'Male21'],
-  ['', 'Male22', 'Male13'],
-  ['', 'Male30', 'Male16'],
-  ['', 'Male26', 'Male3'],
-  ['', 'Male14']
+  ['‎', '‎', '‎', '‎', '‎', '‎', ''],
+  ['‎', '‎', '', '‎', '‎', '', '‎'],
+  ['‎', '‎', '‎', '‎', '‎', '‎', '‎'],
+  ['‎', '', '‎', '‎', '‎', '‎', '‎'],
+  ['‎', '‎', '‎', '‎', '‎', '‎', '‎'],
+  ['‎', '‎', '', '‎', '‎', '‎', '‎'],
+  ['‎', '‎', '‎', '‎', '‎', '‎', '‎'],
+  ['‎', '‎', '‎', '‎', '‎', '‎', '‎'],
+  ['‎', '‎', '‎', '', '‎'],
+  ['‎', '‎', '‎', '‎', '‎'],
+  ['', '‎', '‎', '‎', '‎'],
+  ['', '‎', '‎', '‎', '‎'],
+  ['', '‎', '', '‎', '‎'],
+  ['', '‎', '‎'],
+  ['', '‎', '‎'],
+  ['', '', '‎'],
+  ['', '‎', '‎'],
+  ['', '‎', '‎'],
+  ['', '‎', '‎'],
+  ['', '‎', '‎'],
+  ['', '‎', '‎'],
+  ['', '‎']
 ];
+
+function importData() {
+    const file = document.getElementById('data-spreadsheet').files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
+        console.log(jsonData);
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+const residences_name = ['OO', 'FORE', 'PALA', 'PURN', 'LUCC']
+const students_name = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+const capacity = [3, 3, 1, 2, 1]
+const happiness = [
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [1, 0, 4, 2, 3],
+  [1, 0, 4, 2, 3],
+  [3, 4, 0, 1, 2],
+  [3, 4, 0, 1, 2],
+  [4, 0, 3, 2, 1],
+  [4, 0, 3, 2, 1],
+  [2, 0, 1, 3, 4],
+  [2, 0, 1, 3, 4],
+]
+
+
+
+var happiness_curr = 0;
+var diversity_curr = 0;

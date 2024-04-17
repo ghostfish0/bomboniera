@@ -1,5 +1,7 @@
-function generateTable(data) {
-  let html = '<table><thead>' + Array.from(data[0], (x) => '<th><div>' + x + '</div></th>').join('') + '</thead>';
+const main = document.getElementById("main")
+
+function writetotable(el, data) {
+  let html = '<table><thead>' + Array.from(data[0], (x) => '<th><div>' + residences_name[x] + '</div></th>').join('') + '</thead>';
   for (let i = 1; i < data.length; i++) {
     html += '<tr>';
     for (let j = 0; j < data[i].length; j++) {
@@ -7,13 +9,15 @@ function generateTable(data) {
         html += '<td></td>';
         continue;
       }
-      html += '<td><div title=' + '\'' + data[i][j] + '\'' + '>' + data[i][j] + '</div></td>';
+      html += '<td><div title=' + '\'' + students_name[data[i][j]] + '\'' + '>' + students_name[data[i][j]] + '</div></td>';
     }
     html += '</tr>';
   }
   html += '</table>';
-  return html;
+
+  el.innerHTML = html;
+  return;
 }
 
-document.getElementById("main").innerHTML = generateTable(data);
+writetotable(main, data);
 
