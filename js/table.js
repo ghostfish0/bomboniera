@@ -19,9 +19,10 @@ function writetotable() {
       html += 'id: ' + (id[i][j]) + '&#013;'
       html += 'res (by algorithm): ' + residences_name[j] + '&#013;'
       html += 'happiness: ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '&#013;'
-      html += '\' >'
+      html += '\'>'
       html += students_name[id[i][j]] + ''
-      html += '    ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '</div>'
+      html += ' _  ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) 
+      html += ' _  ' + id[i][j]+ '</div>'
       html += '</td>';
     }
     html += '</tr>';

@@ -50,7 +50,21 @@ async function importData(sheetName) {
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random(1) * (i + 1));
+    const j = Math.floor(prng() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+function splitmix32(a) {
+ return function() {
+   a |= 0;
+   a = a + 0x9e3779b9 | 0;
+   let t = a ^ a >>> 16;
+   t = Math.imul(t, 0x21f0aaad);
+   t = t ^ t >>> 15;
+   t = Math.imul(t, 0x735a2d97);
+   return ((t = t ^ t >>> 15) >>> 0) / 4294967296;
+  }
+}
+
+const prng = splitmix32(Date.now() * Math.random())

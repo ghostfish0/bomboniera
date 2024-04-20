@@ -64,7 +64,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   // creating the variables
   for (let i = startid; i < endid; i++)
     for (let j = 0; j < res_cnt; j++) {
-      // if (happiness[i - startid][j] == 0) continue;
+      if (happiness[i][j] == 0) continue;
       variables.push({ // objective function
         name: `x_${i}_${j}`,
         coef: happiness[i][j],
@@ -112,15 +112,16 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
 
   const opt = {
     // msglev: glpk.GLP_MSG_OFF
-    msglev: glpk.GLP_MSG_ALL
+    msglev: glpk.GLP_MSG_ALL,
+    // presol: false,
   };
 
-  console.log(lp)
 
-  await glpk.solve(lp, opt)
-    .then(sol => (async () => { await handleSolution(name, sol, soltable, startid); })())
-    .catch(err => console.log(err));
+  // await glpk.solve(lp, opt)
+  //   .then(sol => (async () => { await handleSolution(name, sol, soltable, startid); })())
+  //   .catch(err => console.log(err));
 
+  document.getElementById("solution").innerHTML = await glpk.write(lp)
 }
 
 export default solve_secondi
