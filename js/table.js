@@ -15,11 +15,14 @@ function writetotable() {
         continue;
       }
       html += '<td><div title=\''
-      html += students_name[id[i][j]] + '&#013;' 
-      html += 'id: ' + (id[i][j]) + '&#013;' 
-      html += 'res (by algorithm): ' + residences_name[j] + '&#013;' 
+      html += students_name[id[i][j]] + '&#013;'
+      html += 'id: ' + (id[i][j]) + '&#013;'
+      html += 'res (by algorithm): ' + residences_name[j] + '&#013;'
+      html += 'happiness: ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '&#013;'
       html += '\' >'
-      html += students_name[id[i][j]] + '</div></td>';
+      html += students_name[id[i][j]] + ''
+      html += '    ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '</div>'
+      html += '</td>';
     }
     html += '</tr>';
   }

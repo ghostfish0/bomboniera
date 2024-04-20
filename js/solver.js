@@ -33,41 +33,43 @@ function flatten(sol) {
   return table;
 }
 
-async function solve_secondi(name, happiness, capacity, soltable) {
-  // console.log("Solving...")
+async function solve_secondi(name, happiness, capacity, tuple, soltable) {
+  console.log("Solving..." + name)
+  console.log(tuple)
 
   await importData(name)
 
   const glpk = await GLPK();
 
-  console.log(name)
   let lp = {
-    name: 'Assignment Problem',
+    name: name,
     objective: {
       direction: glpk.GLP_MAX,
       name: 'obj',
       vars: [],
     },
     subjectTo: [],
+    bounds: [],
     binaries: [],
+    generals: [],
   };
 
-  let students_cnt = happiness.length
   let res_cnt = capacity.length
   let variables = lp.objective.vars
   let constraints = lp.subjectTo
-  // let bounds = lp.bounds
+  let bounds = lp.bounds
   let binaries = lp.binaries
+  let generals = lp.generals
 
   // creating the variables
   for (let i = startid; i < endid; i++)
     for (let j = 0; j < res_cnt; j++) {
-      if (happiness[i - startid][j] == 0) continue;
+      // if (happiness[i - startid][j] == 0) continue;
       variables.push({ // objective function
         name: `x_${i}_${j}`,
-        coef: happiness[i - startid][j],
+        coef: happiness[i][j],
       })
-      binaries.push(`${name}_${i}_${j}`)
+      binaries.push(`x_${i}_${j}`)
     }
 
   // each student can only be assigned to one residence
@@ -103,15 +105,17 @@ async function solve_secondi(name, happiness, capacity, soltable) {
     for (let i = startid; i < endid; i++) {
       constraints[constraints.length - 1].vars.push({
         name: `x_${i}_${j}`,
-        coef: 1
+        coef: tuple[i],
       })
     }
   }
 
   const opt = {
-    msglev: glpk.GLP_MSG_OFF
-    // msglev: glpk.GLP_MSG_ALL
+    // msglev: glpk.GLP_MSG_OFF
+    msglev: glpk.GLP_MSG_ALL
   };
+
+  console.log(lp)
 
   await glpk.solve(lp, opt)
     .then(sol => (async () => { await handleSolution(name, sol, soltable, startid); })())

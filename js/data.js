@@ -1,6 +1,7 @@
 let residences_name = []
 let residences_id = {}
 let students_name = []
+let tuple = []
 let capacity = []
 let happiness = []
 
@@ -18,7 +19,6 @@ async function importData(sheetName) {
   for (let entry in residences_id) delete residences_id[entry]
   // while (students_name.length) students_name.pop()
   while (capacity.length) capacity.pop()
-  while (happiness.length) happiness.pop()
 
   const file = document.getElementById('data-spreadsheet').files[0];
   const reader = new FileReader();
@@ -37,8 +37,9 @@ async function importData(sheetName) {
     shuffleArray(data)
     data.forEach((entry) => {
       students_name.push(entry.student)
+      tuple.push(+entry.tuple)
       happiness.push([])
-      Object.entries(entry).forEach(([key, value]) => happiness[happiness.length - 1][residences_id[value]] = +key)
+      Object.entries(entry).forEach(([key, value]) => { if (+key >= 0) happiness[happiness.length - 1][residences_id[value]] = +key })
     })
     startid = (endid == 0 ? 0 : endid)
     endid = students_name.length
@@ -48,8 +49,8 @@ async function importData(sheetName) {
 }
 
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random(1) * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }
