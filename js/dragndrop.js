@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   let cells = document.querySelectorAll('#main td div');
+  console.log(cells)
 
   document.getElementById('manual').checked = false;
   document.getElementById('manual').addEventListener('change', () => { // toggle draggable
