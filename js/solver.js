@@ -1,7 +1,7 @@
 import GLPK from '../dist/index.js';
 
 async function mergeSols(obj1, obj2) {
-  // console.log("Merging solutions...\n", obj1, obj2)
+  if (verbose) console.log("Merging solutions...\n", obj1, obj2)
   for (let key in obj2) {
     if (obj1[key]) {
       obj1[key] = [...obj1[key], ...obj2[key]];
@@ -9,12 +9,12 @@ async function mergeSols(obj1, obj2) {
       obj1[key] = obj2[key];
     }
   }
-  // console.log("Finished merging...\n", obj1)
+  if (verbose) console.log("Finished merging...\n", obj1)
   return obj1;
 }
 
 async function handleSolution(name, sol, soltable) {
-  // console.log("Handling solution..." + name, soltable, flatten(sol))
+  if (verbose) console.log("Handling solution..." + name, soltable, flatten(sol))
   soltable = await mergeSols(soltable, flatten(sol))
   document.getElementById("happiness-curr").innerHTML = +document.getElementById("happiness-curr").innerHTML + sol.result.z
   document.getElementById("happiness-max").innerHTML = +document.getElementById("happiness-max").innerHTML + sol.result.z
@@ -34,8 +34,7 @@ function flatten(sol) {
 }
 
 async function solve_secondi(name, happiness, capacity, tuple, soltable) {
-  // console.log("Solving..." + name)
-  // console.log(tuple)
+  if (verbose) console.log("Solving..." + name)
 
   await importData(name)
 
@@ -111,9 +110,8 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   }
 
   const opt = {
-    msglev: glpk.GLP_MSG_OFF
-    // msglev: glpk.GLP_MSG_ALL,
-    // presol: false,
+    // msglev: verbose ? glpk.GLP_MSG_ALL : glpk.GLP_MSG_OFF
+    msglev: glpk.GLP_MSG_OFF,
   };
 
 
@@ -124,6 +122,10 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   // (async () => {console.log(await glpk.write(lp))})()
 
   // document.getElementById("solution").innerHTML = await glpk.write(lp)
+}
+
+async function solve_primi(name, capacity, soltable) {
+
 }
 
 export default solve_secondi

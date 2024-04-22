@@ -1,3 +1,5 @@
+let verbose = false
+
 let residences_name = []
 let residences_id = {}
 let students_name = []
@@ -13,7 +15,7 @@ let diversity_curr = 0;
 let mylet = 0;
 
 async function importData(sheetName) {
-  // console.log("Importing data..." + sheetName)
+  if (verbose) console.log("Importing data..." + sheetName)
 
   while (residences_name.length) residences_name.pop()
   for (let entry in residences_id) delete residences_id[entry]

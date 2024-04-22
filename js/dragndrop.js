@@ -1,7 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initDragnDrop() {
 
   let cells = document.querySelectorAll('#main td div');
-  console.log(cells)
+  // console.log(cells)
 
   document.getElementById('manual').checked = false;
   document.getElementById('manual').addEventListener('change', () => { // toggle draggable
@@ -61,5 +61,5 @@ document.addEventListener('DOMContentLoaded', () => {
     cell.addEventListener('drop', handleDrop);
   });
 
-})
+}
 
