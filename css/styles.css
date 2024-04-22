@@ -95,7 +95,7 @@ th div {
 }
 
 #main td div:hover {
-  transform: scale(0.9);
+  margin: 1px;
   cursor: auto;
 }
 
@@ -105,7 +105,7 @@ th div {
 }
 
 #main td div.over {
-  border: 3px dotted #666;
+  border: 3px dotted var(--fg);
 }
 
 #tips {
