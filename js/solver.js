@@ -53,42 +53,44 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
     generals: [],
   };
 
-  let res_cnt = capacity.length
+  let res_cnt = capacity[1].length
   let variables = lp.objective.vars
   let constraints = lp.subjectTo
-  let bounds = lp.bounds
+  // let bounds = lp.bounds
   let binaries = lp.binaries
-  let generals = lp.generals
+  // let generals = lp.generals
 
   // creating the variables
   for (let i = startid; i < endid; i++)
-    for (let j = 0; j < res_cnt; j++) {
-      if (happiness[i][j] == 0) continue;
-      variables.push({ // objective function
-        name: `x_${i}_${j}`,
-        coef: happiness[i][j],
-      })
-      binaries.push(`x_${i}_${j}`)
-    }
+    if (is2ndYear[i])
+      for (let j = 0; j < res_cnt; j++) {
+        if (happiness[i][j] == 0) continue;
+        variables.push({ // objective function
+          name: `x_${i}_${j}`,
+          coef: happiness[i][j],
+        })
+        binaries.push(`x_${i}_${j}`)
+      }
 
   // each student can only be assigned to one residence
-  for (let i = startid; i < endid; i++) {
-    constraints.push({
-      name: `x_${i}`,
-      vars: [],
-      bnds: {
-        type: glpk.GLP_FX,
-        ub: 1,
-        lb: 1
-      }
-    })
-    for (let j = 0; j < res_cnt; j++) {
-      constraints[i - startid].vars.push({
-        name: `x_${i}_${j}`,
-        coef: 1
+  for (let i = startid; i < endid; i++)
+    if (is2ndYear[i]) {
+      constraints.push({
+        name: `x_${i}`,
+        vars: [],
+        bnds: {
+          type: glpk.GLP_FX,
+          ub: 1,
+          lb: 1
+        }
       })
+      for (let j = 0; j < res_cnt; j++) {
+        constraints[i - startid].vars.push({
+          name: `x_${i}_${j}`,
+          coef: 1
+        })
+      }
     }
-  }
 
   // each residence can only be assigned (at most or equal to) its capacity
   for (let j = 0; j < res_cnt; j++) {
@@ -97,16 +99,17 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
       vars: [],
       bnds: {
         type: glpk.GLP_FX,
-        ub: capacity[j],
-        lb: capacity[j]
+        ub: capacity[1][j],
+        lb: capacity[1][j]
       }
     })
-    for (let i = startid; i < endid; i++) {
-      constraints[constraints.length - 1].vars.push({
-        name: `x_${i}_${j}`,
-        coef: tuple[i],
-      })
-    }
+    for (let i = startid; i < endid; i++)
+      if (is2ndYear[i]) {
+        constraints[constraints.length - 1].vars.push({
+          name: `x_${i}_${j}`,
+          coef: tuple[i],
+        })
+      }
   }
 
   const opt = {
@@ -116,7 +119,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
 
 
   await glpk.solve(lp, opt)
-    .then(sol => (async () => { await handleSolution(name, sol, soltable, startid); })())
+    .then(sol => (async () => { await handleSolution(name, sol, soltable); })())
     .catch(err => console.log(err));
 
   // (async () => {console.log(await glpk.write(lp))})()

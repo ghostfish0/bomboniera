@@ -15,12 +15,12 @@ function writetotable() {
         continue;
       }
       html += '<td><div title=\''
-      html += students_name[id[i][j]] + '&#013;'
+      html += st_name[id[i][j]] + '&#013;'
       html += 'id: ' + (id[i][j]) + '&#013;'
       html += 'res (by algorithm): ' + residences_name[j] + '&#013;'
       html += 'happiness: ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '&#013;'
       html += '\'>'
-      html += students_name[id[i][j]] + ''
+      html += st_name[id[i][j]] + ''
       html += ' _  ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) 
       html += ' _  ' + id[i][j]+ '</div>'
       html += '</td>';
