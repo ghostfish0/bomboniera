@@ -34,8 +34,8 @@ function flatten(sol) {
 }
 
 async function solve_secondi(name, happiness, capacity, tuple, soltable) {
-  console.log("Solving..." + name)
-  console.log(tuple)
+  // console.log("Solving..." + name)
+  // console.log(tuple)
 
   await importData(name)
 
@@ -111,17 +111,19 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   }
 
   const opt = {
-    // msglev: glpk.GLP_MSG_OFF
-    msglev: glpk.GLP_MSG_ALL,
+    msglev: glpk.GLP_MSG_OFF
+    // msglev: glpk.GLP_MSG_ALL,
     // presol: false,
   };
 
 
-  // await glpk.solve(lp, opt)
-  //   .then(sol => (async () => { await handleSolution(name, sol, soltable, startid); })())
-  //   .catch(err => console.log(err));
+  await glpk.solve(lp, opt)
+    .then(sol => (async () => { await handleSolution(name, sol, soltable, startid); })())
+    .catch(err => console.log(err));
 
-  document.getElementById("solution").innerHTML = await glpk.write(lp)
+  // (async () => {console.log(await glpk.write(lp))})()
+
+  // document.getElementById("solution").innerHTML = await glpk.write(lp)
 }
 
 export default solve_secondi
