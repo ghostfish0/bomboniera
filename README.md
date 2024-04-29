@@ -38,23 +38,6 @@ The algorithm doesn't put you into rooms, it put you into residences. The reside
 **Q: I can trick the algorithm! I will put Purnama not as my 1st choice so it is less competitive for me**
 This is simply NOT true. The algorithm tries to make you happy, if you put Purnama lower down the rank, it will think you are happier not being in Purnama! Just be real and choose what you really want to be in.
 
-## Todo 
-
-- implement solve primi feature: 
-    - **done** order should be secondi - primi - seconde - prime 
-    - object: cultural group
-        - male
-            - overall - both secondi and primi: calculate a function 
-            - loop: each residence - current
-            - loop: calculate: each residence - the amount to be added 
-- diversify secondi feature
-- add filter feature
-    - find most popular residence 
-    - assign super negative value in solver
-    - find least popular residence
-    - assign super negative value in solver
-- add graph 
-
 Collegio del Mondo Unito dell'Adriatico - 2024
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
