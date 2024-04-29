@@ -2,6 +2,7 @@ let verbose = false
 let shuffleImport = true
 let diversifySecondYears = true
 let diversifyFirstYears = false
+let forceNewResidence = true
 
 // residences info
 let residences_name = []
@@ -14,6 +15,7 @@ let tuple = []
 let st_region = []
 let sex = [] // 0 is female, 1 is male
 let is2ndYear = []
+let curr_res = []
 
 // happiness matrix
 let happiness = []
@@ -26,7 +28,8 @@ let curr_regions = []
 let regions = {}
 let happiness_curr = 0;
 let diversity_curr = 0;
-
+let mostPopularResidence = -1
+let leastPopularResidence = -1
 
 async function importData(sheetName) {
   if (verbose) console.log("Importing data..." + sheetName)
@@ -63,6 +66,7 @@ async function importData(sheetName) {
         tuple.push(+entry.tuple)
         st_region.push(entry.region)
         sex.push(sheetName == "male")
+        curr_res.push(entry["current residence"])
 
         happiness.push([])
         Object.entries(entry).forEach(([key, value]) => { if (+key >= 0) happiness[happiness.length - 1][residences_id[value]] = +key })
@@ -80,9 +84,28 @@ async function importData(sheetName) {
         tuple.push(false)
         st_region.push(entry.region)
         sex.push(sheetName == "male")
+        curr_res.push(false)
         happiness.push(false)
       })
       endid_1 = st_name.length
+
+      if (forceNewResidence) {
+        for (let j = 0; j < capacity["second year"].length; j++) {
+          let currtotalhappinessmax = 0
+          let currtotalhappinessmin = 99999999
+          let restotalhappiness = happiness.slice(startid, endid).reduce((a, b) => a + b[j], 0)
+          if (!currtotalhappiness || restotalhappiness > currtotalhappinessmax)
+            mostPopularResidence = j
+          if (!currtotalhappiness || restotalhappiness < currtotalhappinessmin)
+            leastPopularResidence = j
+        }
+        for (let i = startid; i < endid; i++) {
+          if (residences_id[curr_res[i]] == mostPopularResidence)
+            happiness[i][mostPopularResidence] = -9999;
+          if (residences_id[curr_res[i]] == leastPopularResidence && happiness[i][leastPopularResidence] == 0)
+            happiness[i][leastPopularResidence] = -9999;
+        }
+      }
 
       curr_regions = [...new Set(st_region)]
 
