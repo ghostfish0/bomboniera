@@ -3,8 +3,8 @@ import GLPK from '../dist/index.js';
 async function handleSolution(name, sol, soltable) {
   if (verbose) console.log("Handling solution..." + name, soltable, flatten(sol))
   soltable = await mergeSols(soltable, flatten(sol))
-  document.getElementById("happiness-curr").innerHTML = +document.getElementById("happiness-curr").innerHTML + sol.result.z
-  document.getElementById("happiness-max").innerHTML = +document.getElementById("happiness-max").innerHTML + sol.result.z
+  // document.getElementById("happiness-curr").innerHTML = +document.getElementById("happiness-curr").innerHTML + sol.result.z
+  // document.getElementById("happiness-max").innerHTML = +document.getElementById("happiness-max").innerHTML + sol.result.z
   writetotable()
 }
 
