@@ -94,9 +94,9 @@ async function importData(sheetName) {
           let currtotalhappinessmax = 0
           let currtotalhappinessmin = 99999999
           let restotalhappiness = happiness.slice(startid, endid).reduce((a, b) => a + b[j], 0)
-          if (!currtotalhappiness || restotalhappiness > currtotalhappinessmax)
+          if (!currtotalhappinessmax || restotalhappiness > currtotalhappinessmax)
             mostPopularResidence = j
-          if (!currtotalhappiness || restotalhappiness < currtotalhappinessmin)
+          if (!currtotalhappinessmin || restotalhappiness < currtotalhappinessmin)
             leastPopularResidence = j
         }
         for (let i = startid; i < endid; i++) {

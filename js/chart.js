@@ -1,7 +1,10 @@
 var context = document.getElementById('diversity-chart').getContext('2d');
-function initChart() {
-  if (verbose) console.log("Init Chart")
-  let datasets = {}
+let datasets = {}
+let chart
+
+function calculateChart() {
+  datasets = {}
+
   for (let r of curr_regions) {
     datasets[r] = {
       label: r,
@@ -24,7 +27,17 @@ function initChart() {
       datasets[r].data[j] /= s
     }
   }
-  let chart = new Chart(context, {
+}
+function updateChart() {
+  console.log("update chart")
+  calculateChart()
+  chart.data.datasets = Object.values(datasets)
+  chart.update('none')
+}
+function initChart() {
+  if (verbose) console.log("Init Chart")
+  calculateChart()
+  chart = new Chart(context, {
     type: 'bar',
     data: {
       labels: residences_name,

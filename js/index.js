@@ -56,7 +56,5 @@ function SolToXLSX() {
   XLSX.writeFile(wb, 'soltable.xlsx');
 }
 
-allocate()
-
 window.allocate = allocate;
 window.exportXLSX = SolToXLSX;

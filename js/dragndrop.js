@@ -62,6 +62,7 @@ async function initDragnDrop() {
       e.currentTarget.classList.add(resSrc);
       e.currentTarget.classList.remove(resDes);
 
+      updateChart()
     }
     return false;
   }
