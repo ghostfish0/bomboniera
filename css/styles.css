@@ -18,9 +18,17 @@ body {
 }
 
 h1 {
-  float: left;
   margin-top: 5px;
+  margin-bottom: 0;
+}
+
+#title {
   margin-bottom: 10px;
+}
+
+#title p{
+  margin-top: 0;
+  font-size: 0.75em;
 }
 
 label {
