@@ -28,9 +28,9 @@ function writetotable() {
       html += 'id: ' + st
       html += (sex[st] ? " ♂️" : " ♀️") + " "
       html += (is2ndYear[st] ? "🦅" : "🐣") + "<br>"
-      // html += 'res_auto: ' + residences_name[j] + '<br>'
-      html += "🌎 " + st_region[st] + '<br>'
-      html += (happiness[st][j] > 0 ? "😆".repeat(happiness[st][j]) : "😭") + '<br>'
+      html += "🌎 " + st_region[st] + "<br>"
+      if (is2ndYear[st]) html += (happiness[st][j] > 0 ? "😆".repeat(happiness[st][j]) : "😭")
+      html += '<br>'
       html += '</div>'
       html += '</div></td>'
     }

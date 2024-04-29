@@ -42,26 +42,44 @@ async function initDragnDrop() {
   function handleDrop(e) {
     e.stopPropagation(); // stops the browser from redirecting.
     if (dragSrcEl !== this) {
-      let resSrc = Array.from(this.classList).find(cls => cls.startsWith('res_'));
-      let resDes = e.dataTransfer.getData('text/res');
+      let id0 = +this.id;
+      let id1 = +dragSrcEl.id;
 
-      let resSrcid = residences_id[resSrc.split('res_')[1]];
-      let resDesid = residences_id[resDes.split('res_')[1]];
-      let indexSrc = soltable[resSrcid].indexOf(+this.id);
-      let indexDes = soltable[resDesid].indexOf(+dragSrcEl.id);
+      let res0 = Array.from(this.classList).find(cls => cls.startsWith('res_'));
+      let res1 = e.dataTransfer.getData('text/res');
 
-      [soltable[resSrcid][indexSrc], soltable[resDesid][indexDes]] = [soltable[resDesid][indexDes], soltable[resSrcid][indexSrc]];
+      let res0id = residences_id[res0.split('res_')[1]];
+      let res1id = residences_id[res1.split('res_')[1]];
+      let i0 = soltable[res0id].indexOf(id0);
+      let i1 = soltable[res1id].indexOf(id1);
+
+      [soltable[res0id][i0], soltable[res1id][i1]] = [soltable[res1id][i1], soltable[res0id][i0]];
+
+      let html0 = "";
+      html0 += (sex[id1] ? " ♂️" : " ♀️") + " ";
+      html0 += (is2ndYear[id1] ? "🦅" : "🐣") + "<br>";
+      html0 += "🌎 " + st_region[id1] + '<br>';
+      if (is2ndYear[id1]) html0 += (happiness[id1][res0id] > 0 ? "😆".repeat(happiness[id1][res0id]) : happiness[id1][res0id] < 0 ? "🚫" : "😭")
+      html0 += '<br>'
+      let html1 = "";
+      html1 += (sex[id0] ? " ♂️" : " ♀️") + " ";
+      html1 += (is2ndYear[id0] ? "🦅" : "🐣") + "<br>";
+      html1 += "🌎 " + st_region[id0] + '<br>';
+      if (is2ndYear[id0]) html1 += (happiness[id0][res1id] > 0 ? "😆".repeat(happiness[id0][res1id]) : happiness[id0][res1id] < 0 ? "🚫" : "😭")
+      html1 += '<br>'
 
       dragSrcEl.innerHTML = this.innerHTML;
       dragSrcEl.id = this.id;
-      dragSrcEl.classList.add(resDes)
-      dragSrcEl.classList.remove(resSrc)
+      dragSrcEl.classList.add(res1);
+      dragSrcEl.classList.remove(res0);
+      dragSrcEl.querySelector('.info').innerHTML = html1;
 
       e.currentTarget.id = e.dataTransfer.getData('text/id');
       e.currentTarget.innerHTML = e.dataTransfer.getData('text/html');
-      e.currentTarget.classList.add(resSrc);
-      e.currentTarget.classList.remove(resDes);
-
+      e.currentTarget.classList.add(res0);
+      e.currentTarget.classList.remove(res1);
+      e.currentTarget.querySelector('.info').innerHTML = html0;
+      
       updateChart()
     }
     return false;
