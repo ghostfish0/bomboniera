@@ -1,9 +1,11 @@
 let verbose = false
-let shuffleImport = false
+let shuffleImport = true
+let diversifySecondYears = true
+let diversifyFirstYears = true
 
 // residences info
 let residences_name = []
-let capacity = [[], []]
+let capacity = { "first year": [], "second year": [] }
 let residences_id = {}
 
 // students info
@@ -17,6 +19,7 @@ let is2ndYear = []
 let happiness = []
 let soltable = {}
 let startid = 0;
+let curr_regions = []
 let regions = {}
 let endid = 0;
 let happiness_curr = 0;
@@ -28,8 +31,8 @@ async function importData(sheetName) {
 
   while (residences_name.length) residences_name.pop()
   for (let entry in residences_id) delete residences_id[entry]
-  while (capacity[0].length) capacity[0].pop()
-  while (capacity[1].length) capacity[1].pop()
+  while (capacity["first year"].length) capacity["first year"].pop()
+  while (capacity["second year"].length) capacity["second year"].pop()
 
   const file = document.getElementById('data-spreadsheet').files[0];
   const reader = new FileReader();
@@ -43,8 +46,8 @@ async function importData(sheetName) {
       data.forEach((entry) => {
         residences_name.push(entry["residence"])
         residences_id[entry["residence"]] = residences_name.length - 1
-        capacity[0].push(entry["first year"])
-        capacity[1].push(entry["second year"])
+        capacity["first year"].push(entry["first year"])
+        capacity["second year"].push(entry["second year"])
       })
 
       sheet = workbook.Sheets["info_" + (sheetName == "male" ? "secondi" : "seconde")]
@@ -76,6 +79,9 @@ async function importData(sheetName) {
         sex.push(sheetName == "male")
         happiness.push(false)
       })
+
+      curr_regions = [...new Set(st_region)]
+
       resolve()
     }
 
@@ -88,37 +94,32 @@ async function importData(sheetName) {
 async function initDiversity(sheetName) {
   regions[sheetName] = {}
   stats = regions[sheetName]
-  stats.overall = {}
+  stats.overall = { "first year": {}, "second year": {} }
 
-  console.log("init diversity", st_region)
+  if (verbose) console.log("init diversity", st_region)
 
-  let curr_regions = [...new Set(st_region)]
 
-  console.log(st_region.length)
-  st_region.forEach(item => {
-    stats.overall[item] = stats.overall[item] + 1 || 0;
-    console.log(item)
-  })
-  console.log(regions)
-  Object.keys(stats.overall).forEach(key => stats.overall[key] = stats.overall[key] / st_region.length)
-
-  for (let j = 0; j < capacity[0].length; j++) {
-    stats[j] = {}
-    curr_regions.forEach(region => stats[j][region] = (capacity[0][j] + capacity[1][j]) * stats.overall[region])
-    stats[j][curr_regions[curr_regions.length - 1]] += capacity[0][j] + capacity[1][j] - Object.values(stats[j]).reduce((sum, value) => sum + value, 0)
-    curr_regions.forEach(region => stats[j][region] = Math.ceil(stats[j][region]))
-    // console.log(capacity[0][j] + capacity[1][j], Object.values(stats[j]).reduce((sum, value) => sum + value, 0))
+  for (let i = 0; i < st_region.length; i++) {
+    if ((sheetName == "male" && !sex[i]) || (sheetName == "female" && sex[i])) continue
+    let rg = st_region[i]
+    let year = is2ndYear[i] ? "second year" : "first year"
+    stats.overall[year][rg] = stats.overall[year][rg] + 1 || 1;
   }
-
-  // console.log("Region: ", stats)
-  //
-  // for (let j in soltable) {
-  //   for (let i in soltable[residence]) {
-  //     stats[j][st_region[i]]--;
-  //   }
-  // }
-  //
-  // console.log("Region: ", stats)
+  Object.keys(stats.overall).forEach((year) => {
+    let st_count = capacity[year].reduce((a, b) => a + b, 0);
+    curr_regions.forEach(rg => stats.overall[year][rg] /= st_count)
+    for (let i = 0; i < capacity[year].length; i++) {
+      res = residences_name[i]
+      stats[res] = stats[res] || {}
+      stats[res][year] = {}
+      curr_regions.forEach(rg => {
+        stats[res][year][rg] = {
+          min: Math.floor(capacity[year][i] * stats.overall[year][rg]),
+          max: Math.ceil(capacity[year][i] * stats.overall[year][rg])
+        }
+      })
+    }
+  })
 }
 
 function shuffleArray(array) {

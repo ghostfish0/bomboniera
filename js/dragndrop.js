@@ -1,4 +1,5 @@
-function initDragnDrop() {
+async function initDragnDrop() {
+  console.log("initDragDrop")
 
   let cells = document.querySelectorAll('#main td div');
   // console.log(cells)

@@ -84,28 +84,38 @@ th div {
   flex-grow: 1;
 }
 
-#main div {
+#main th > div {
   padding: 10px;
   border: 2px solid var(--fg);
 }
 
-#main td div {
+#main td > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 2px solid var(--fg);
   user-select: none;
   background-color: var(--bg);
 }
 
-#main td div:hover {
-  margin: 1px;
+#main td > div:hover {
+  /* margin: 1px; */
   cursor: auto;
 }
 
-#main td div[draggable=true]:hover {
+#main td > div[draggable=true]:hover {
   transform: scale(1.1);
   cursor: move;
 }
 
-#main td div.over {
+#main td > div.over {
   border: 3px dotted var(--fg);
+}
+
+.info {
+  margin-left: 10px;
+  font-size: 0.56em;
 }
 
 #tips {

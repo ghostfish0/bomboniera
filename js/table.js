@@ -14,16 +14,17 @@ function writetotable() {
         html += '<td></td>';
         continue;
       }
-      html += '<td><div title=\''
-      html += st_name[id[i][j]] + '&#013;'
-      html += 'id: ' + (id[i][j]) + '&#013;'
-      html += 'res (by algorithm): ' + residences_name[j] + '&#013;'
-      html += 'happiness: ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '&#013;'
-      html += '\'>'
-      html += st_name[id[i][j]] + ''
-      html += ' _  ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) 
-      html += ' _  ' + id[i][j]+ '</div>'
-      html += '</td>';
+      html += '<td><div>'
+      // html += '<div class="name">'
+      html += st_name[id[i][j]]
+      // html += '</div>'
+      html += '<div class="info">'
+      html += 'id: ' + (id[i][j]) + '<br>'
+      html += 'res_auto: ' + residences_name[j] + '<br>'
+      html += 'region: ' + st_region[id[i][j]] + '<br>'
+      html += 'happiness: ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '<br>'
+      html += '</div>'
+      html += '</div></td>'
     }
     html += '</tr>';
   }

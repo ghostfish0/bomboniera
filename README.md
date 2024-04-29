@@ -47,6 +47,12 @@ This is simply NOT true. The algorithm tries to make you happy, if you put Purna
             - overall - both secondi and primi: calculate a function 
             - loop: each residence - current
             - loop: calculate: each residence - the amount to be added 
+- diversify secondi feature
+- add filter feature
+    - find most popular residence 
+    - assign super negative value in solver
+    - find least popular residence
+    - assign super negative value in solver
 - add graph 
 
 Collegio del Mondo Unito dell'Adriatico - 2024
