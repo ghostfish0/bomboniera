@@ -16,9 +16,8 @@ async function initDragnDrop() {
     dragSrcEl = this;
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.innerHTML);
-    e.dataTransfer.setData('text/title', this.title);
     e.dataTransfer.setData('text/id', this.id);
-    e.dataTransfer.setDragImage(crt, 0, 0);
+    e.dataTransfer.setData('text/res', Array.from(this.classList).find(cls => cls.startsWith('res_')));
   }
 
   function handleDragEnd() {
@@ -43,12 +42,26 @@ async function initDragnDrop() {
   function handleDrop(e) {
     e.stopPropagation(); // stops the browser from redirecting.
     if (dragSrcEl !== this) {
+      let resSrc = Array.from(this.classList).find(cls => cls.startsWith('res_'));
+      let resDes = e.dataTransfer.getData('text/res');
+
+      let resSrcid = residences_id[resSrc.split('res_')[1]];
+      let resDesid = residences_id[resDes.split('res_')[1]];
+      let indexSrc = soltable[resSrcid].indexOf(+this.id);
+      let indexDes = soltable[resDesid].indexOf(+dragSrcEl.id);
+
+      [soltable[resSrcid][indexSrc], soltable[resDesid][indexDes]] = [soltable[resDesid][indexDes], soltable[resSrcid][indexSrc]];
+
       dragSrcEl.innerHTML = this.innerHTML;
-      dragSrcEl.title = this.title;
       dragSrcEl.id = this.id;
-      e.currentTarget.innerHTML = e.dataTransfer.getData('text/html');
-      e.currentTarget.title = e.dataTransfer.getData('text/title');
+      dragSrcEl.classList.add(resDes)
+      dragSrcEl.classList.remove(resSrc)
+
       e.currentTarget.id = e.dataTransfer.getData('text/id');
+      e.currentTarget.innerHTML = e.dataTransfer.getData('text/html');
+      e.currentTarget.classList.add(resSrc);
+      e.currentTarget.classList.remove(resDes);
+
     }
     return false;
   }

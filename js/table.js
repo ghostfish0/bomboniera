@@ -10,19 +10,27 @@ function writetotable() {
   for (let i = 1; i < id.length; i++) {
     html += '<tr>';
     for (let j = 0; j < id[i].length; j++) {
-      if (id[i][j] === '') {
+      let st = id[i][j]
+      if (st === '') {
         html += '<td></td>';
         continue;
       }
-      html += '<td><div>'
+      html += '<td><div class=\''
+      html += is2ndYear[st] ? "info_secondi " : "info_primi " + " "
+      html += 'res_' + residences_name[j] + ' '
+      html += '\' id=\''
+      html += st
+      html += '\'>'
       // html += '<div class="name">'
-      html += st_name[id[i][j]]
+      html += st_name[st]
       // html += '</div>'
       html += '<div class="info">'
-      html += 'id: ' + (id[i][j]) + '<br>'
-      html += 'res_auto: ' + residences_name[j] + '<br>'
-      html += 'region: ' + st_region[id[i][j]] + '<br>'
-      html += 'happiness: ' + happiness[id[i][j]][j] + "/" + (residences_name.length - 1) + '<br>'
+      html += 'id: ' + st
+      html += (sex[st] ? " ♂️" : " ♀️") + " "
+      html += (is2ndYear[st] ? "🦅" : "🐣") + "<br>"
+      // html += 'res_auto: ' + residences_name[j] + '<br>'
+      html += "🌎 " + st_region[st] + '<br>'
+      html += (happiness[st][j] > 0 ? "😆".repeat(happiness[st][j]) : "😭") + '<br>'
       html += '</div>'
       html += '</div></td>'
     }

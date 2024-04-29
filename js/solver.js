@@ -14,7 +14,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   const glpk = await GLPK();
 
   let lp = {
-    name: name,
+    name: "secondi " + name,
     objective: {
       direction: glpk.GLP_MAX,
       name: 'obj',
@@ -95,7 +95,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
           bnds: {
             type: glpk.GLP_DB,
             ub: regions[name][residences_name[j]]["second year"][r].max,
-            lb: regions[name][residences_name[j]]["second year"][r].max - 1,
+            lb: Math.min(1, regions[name][residences_name[j]]["second year"][r].min - 1),
           }
         }
         for (let i = startid; i < endid; i++)
@@ -105,15 +105,14 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
               coef: tuple[i],
             })
           }
-        console.log(st)
         constraints.push(st)
       }
     }
   }
   const opt = {
     // msglev: verbose ? glpk.GLP_MSG_ALL : glpk.GLP_MSG_OFF
-    // msglev: glpk.GLP_MSG_OFF,
-    msglev: glpk.GLP_MSG_DBG,
+    msglev: glpk.GLP_MSG_OFF,
+    // msglev: glpk.GLP_MSG_DBG,
   };
 
 
@@ -124,19 +123,18 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
       console.log(err)
     });
 
-  (async () => { console.log(await glpk.write(lp)) })()
+  // (async () => { console.log(await glpk.write(lp)) })()
 
-  // document.getElementById("solution").innerHTML = await glpk.write(lp)
 }
 
 
 async function solve_primi(name, capacity, st_region, soltable) {
-  if (verbose) console.log("Solving..." + name)
+  if (verbose) console.log("Solving primi..." + name)
 
   const glpk = await GLPK();
 
   let lp = {
-    name: name,
+    name: "primi " + name,
     objective: {
       direction: glpk.GLP_MAX,
       name: 'obj',
@@ -148,7 +146,7 @@ async function solve_primi(name, capacity, st_region, soltable) {
     generals: [],
   };
 
-  let res_cnt = capacity["second year"].length
+  let res_cnt = capacity["first year"].length
   let variables = lp.objective.vars
   let constraints = lp.subjectTo
   // let bounds = lp.bounds
@@ -156,20 +154,19 @@ async function solve_primi(name, capacity, st_region, soltable) {
   // let generals = lp.generals
 
   // creating the variables
-  for (let i = startid; i < endid; i++)
-    if (is2ndYear[i])
+  for (let i = startid_1; i < endid_1; i++)
+    if (!is2ndYear[i])
       for (let j = 0; j < res_cnt; j++) {
-        if (happiness[i][j] == 0) continue;
         variables.push({ // objective function
           name: `x_${i}_${j}`,
-          coef: happiness[i][j],
+          coef: 1,
         })
         binaries.push(`x_${i}_${j}`)
       }
 
   // each student can only be assigned to one residence
-  for (let i = startid; i < endid; i++)
-    if (is2ndYear[i]) {
+  for (let i = startid_1; i < endid_1; i++)
+    if (!is2ndYear[i]) {
       constraints.push({
         name: `x_${i}`,
         vars: [],
@@ -180,7 +177,7 @@ async function solve_primi(name, capacity, st_region, soltable) {
         }
       })
       for (let j = 0; j < res_cnt; j++) {
-        constraints[i - startid].vars.push({
+        constraints[i - startid_1].vars.push({
           name: `x_${i}_${j}`,
           coef: 1
         })
@@ -194,21 +191,21 @@ async function solve_primi(name, capacity, st_region, soltable) {
       vars: [],
       bnds: {
         type: glpk.GLP_FX,
-        ub: capacity["second year"][j],
-        lb: capacity["second year"][j]
+        ub: capacity["first year"][j],
+        lb: capacity["first year"][j]
       }
     })
-    for (let i = startid; i < endid; i++)
-      if (is2ndYear[i]) {
+    for (let i = startid_1; i < endid_1; i++)
+      if (!is2ndYear[i]) {
         constraints[constraints.length - 1].vars.push({
           name: `x_${i}_${j}`,
-          coef: tuple[i],
+          coef: 1,
         })
       }
   }
 
   // each residence can only have students of a regional group as much as calculated
-  if (diversifySecondYears) {
+  if (diversifyFirstYears) {
     for (let r of curr_regions) {
       for (let j = 0; j < res_cnt; j++) {
         let st = {
@@ -216,26 +213,25 @@ async function solve_primi(name, capacity, st_region, soltable) {
           vars: [],
           bnds: {
             type: glpk.GLP_DB,
-            ub: regions[name][residences_name[j]]["second year"][r].max,
-            lb: regions[name][residences_name[j]]["second year"][r].max - 1,
+            ub: regions[name][residences_name[j]]["first year"][r].max,
+            lb: regions[name][residences_name[j]]["first year"][r].min,
           }
         }
-        for (let i = startid; i < endid; i++)
+        for (let i = startid_1; i < endid_1; i++)
           if (is2ndYear[i] && st_region[i] == r) {
             st.vars.push({
               name: `x_${i}_${j}`,
-              coef: tuple[i],
+              coef: 1,
             })
           }
-        console.log(st)
         constraints.push(st)
       }
     }
   }
   const opt = {
     // msglev: verbose ? glpk.GLP_MSG_ALL : glpk.GLP_MSG_OFF
-    // msglev: glpk.GLP_MSG_OFF,
-    msglev: glpk.GLP_MSG_DBG,
+    msglev: glpk.GLP_MSG_OFF,
+    // msglev: glpk.GLP_MSG_DBG,
   };
 
 
@@ -246,15 +242,14 @@ async function solve_primi(name, capacity, st_region, soltable) {
       console.log(err)
     });
 
-  (async () => { console.log(await glpk.write(lp)) })()
+  // (async () => { console.log(await glpk.write(lp)) })()
 
-  // document.getElementById("solution").innerHTML = await glpk.write(lp)
 
 }
 
 async function general_solver(name, happiness, capacity, tuple, region, soltable) {
   await solve_secondi(name, happiness, capacity, tuple, soltable)
-  // await solve_primi(name, capacity, region, soltable)
+  await solve_primi(name, capacity, region, soltable)
 }
 
 async function mergeSols(obj1, obj2) {

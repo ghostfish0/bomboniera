@@ -14,11 +14,21 @@ function initChart() {
       datasets[st_region[i]].data[j] = datasets[st_region[i]].data[j] + 1 || 1
     }
   }
-  console.log("Datasets: ", Object.values(datasets))
+  for (let j = 0; j < residences_name.length; j++) {
+    let s = 0
+    for (let r of curr_regions) {
+      if (!datasets[r].data[j]) continue
+      s += datasets[r].data[j]
+    }
+    for (let r of curr_regions) {
+      datasets[r].data[j] /= s
+    }
+  }
   let chart = new Chart(context, {
     type: 'bar',
     data: {
       labels: residences_name,
+      // labels: [...residences_name, "ALL"],
       datasets: Object.values(datasets),
     },
     options: {

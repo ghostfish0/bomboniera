@@ -22,8 +22,7 @@
         <form onsubmit="allocate();return false;" >
           <input type="file" id="data-spreadsheet" name="data-spreadsheet" accept=".xlsx" required/>
           <input type="submit" name="run" value="ALLOCATE >:)" id="run" />
-          <input type="button" name="excel" value="Export to XLSX" id="excel" />
-          <input type="button" name="csv" value="Export to CSV" id="csv" />
+          <input onclick="exportXLSX();" type="button" name="excel" value="Export to XLSX" id="excel" />
         </form>
         <div>
           <input id="verbose" type="checkbox" name="verbose" checked/>

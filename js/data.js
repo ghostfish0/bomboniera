@@ -1,7 +1,7 @@
 let verbose = false
 let shuffleImport = true
 let diversifySecondYears = true
-let diversifyFirstYears = true
+let diversifyFirstYears = false
 
 // residences info
 let residences_name = []
@@ -19,9 +19,11 @@ let is2ndYear = []
 let happiness = []
 let soltable = {}
 let startid = 0;
+let endid = 0;
+let startid_1 = 0;
+let endid_1 = 0;
 let curr_regions = []
 let regions = {}
-let endid = 0;
 let happiness_curr = 0;
 let diversity_curr = 0;
 
@@ -67,6 +69,7 @@ async function importData(sheetName) {
       })
       endid = st_name.length
 
+      startid_1 = st_name.length
       sheet = workbook.Sheets["info_" + (sheetName == "male" ? "primi" : "prime")]
       data = XLSX.utils.sheet_to_json(sheet)
       if (verbose) console.log("first year data: ", data)
@@ -79,6 +82,7 @@ async function importData(sheetName) {
         sex.push(sheetName == "male")
         happiness.push(false)
       })
+      endid_1 = st_name.length
 
       curr_regions = [...new Set(st_region)]
 
