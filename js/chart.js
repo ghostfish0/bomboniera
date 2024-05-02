@@ -63,7 +63,8 @@ function initChart() {
             font: {
               size: 9,
             }
-          }
+          },
+          max: 1,
         },
         y: {
           stacked: true,
