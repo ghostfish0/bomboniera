@@ -20,7 +20,9 @@ function writetotable() {
       html += 'res_' + residences_name[j] + ' '
       html += '\' id=\''
       html += st
-      html += '\'>'
+      html += '\' title=\"'
+      html += orig_choices[st].join('&#013;')
+      html += '\">'
       // html += '<div class="name">'
       html += st_name[st]
       // html += '</div>'

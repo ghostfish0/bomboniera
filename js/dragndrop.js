@@ -17,6 +17,7 @@ async function initDragnDrop() {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', this.innerHTML);
     e.dataTransfer.setData('text/id', this.id);
+    e.dataTransfer.setData('text/title', this.title);
     e.dataTransfer.setData('text/res', Array.from(this.classList).find(cls => cls.startsWith('res_')));
   }
 
@@ -70,11 +71,13 @@ async function initDragnDrop() {
 
       dragSrcEl.innerHTML = this.innerHTML;
       dragSrcEl.id = this.id;
+      dragSrcEl.title = this.title;
       dragSrcEl.classList.add(res1);
       dragSrcEl.classList.remove(res0);
       dragSrcEl.querySelector('.info').innerHTML = html1;
 
       e.currentTarget.id = e.dataTransfer.getData('text/id');
+      e.currentTarget.title = e.dataTransfer.getData('text/title');
       e.currentTarget.innerHTML = e.dataTransfer.getData('text/html');
       e.currentTarget.classList.add(res0);
       e.currentTarget.classList.remove(res1);

@@ -16,6 +16,7 @@ let st_region = []
 let sex = [] // 0 is female, 1 is male
 let is2ndYear = []
 let curr_res = []
+let orig_choices = []
 
 // happiness matrix
 let happiness = []
@@ -55,6 +56,7 @@ async function importData(sheetName) {
         capacity["second year"].push(entry["second year"])
       })
 
+      // Handle second year data
       sheet = workbook.Sheets["info_" + (sheetName == "male" ? "secondi" : "seconde")]
       data = XLSX.utils.sheet_to_json(sheet)
       if (verbose) console.log("second year data: ", data)
@@ -67,12 +69,14 @@ async function importData(sheetName) {
         st_region.push(entry.region)
         sex.push(sheetName == "male")
         curr_res.push(entry["current residence"])
+        orig_choices.push(Object.entries(entry).filter(([key, _]) => +key >= 0).map(([_, value]) => value).reverse())
 
         happiness.push([])
         Object.entries(entry).forEach(([key, value]) => { if (+key >= 0) happiness[happiness.length - 1][residences_id[value]] = +key })
       })
       endid = st_name.length
 
+      // Handle first year data
       startid_1 = st_name.length
       sheet = workbook.Sheets["info_" + (sheetName == "male" ? "primi" : "prime")]
       data = XLSX.utils.sheet_to_json(sheet)
@@ -85,6 +89,7 @@ async function importData(sheetName) {
         st_region.push(entry.region)
         sex.push(sheetName == "male")
         curr_res.push(false)
+        orig_choices.push([])
         happiness.push(false)
       })
       endid_1 = st_name.length
@@ -107,7 +112,7 @@ async function importData(sheetName) {
         }
       }
 
-      curr_regions = [...new Set(st_region)]
+      curr_regions = [...new Set(st_region)].sort()
 
       resolve()
     }
