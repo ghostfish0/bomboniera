@@ -3,6 +3,7 @@ let shuffleImport = true
 let diversifySecondYears = true
 let diversifyFirstYears = false
 let forceNewResidence = true
+let seed = ""
 
 // residences info
 let residences_name = []
@@ -31,6 +32,33 @@ let happiness_curr = 0;
 let diversity_curr = 0;
 let mostPopularResidence = -1
 let leastPopularResidence = -1
+
+function resetAll() {
+  residences_name = [];
+  capacity = { "first year": [], "second year": [] };
+  residences_id = {};
+
+  st_name = [];
+  tuple = [];
+  st_region = [];
+  sex = [];
+  is2ndYear = [];
+  curr_res = [];
+  orig_choices = [];
+
+  happiness = [];
+  soltable = {};
+  startid = 0;
+  endid = 0;
+  startid_1 = 0;
+  endid_1 = 0;
+  curr_regions = [];
+  regions = {};
+  happiness_curr = 0;
+  diversity_curr = 0;
+  mostPopularResidence = -1;
+  leastPopularResidence = -1;
+}
 
 async function importData(sheetName) {
   if (verbose) console.log("Importing data..." + sheetName)

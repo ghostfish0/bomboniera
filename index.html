@@ -24,17 +24,9 @@
         </label>
         <form onsubmit="allocate();return false;" >
           <input type="file" id="data-spreadsheet" name="data-spreadsheet" accept=".xlsx" required/>
-          <!-- <div> -->
-          <!--   <input type="radio" id="sortsecondi" name="sortyear" checked/> -->
-          <!--   <label for="sortsecondi">Allocate secondi</label> -->
-          <!-- </div> -->
-          <!-- <div> -->
-          <!--   <input type="radio" id="sortprimi" name="sortyear"/> -->
-          <!--   <label for="sortprimi">Allocate primi</label> -->
-          <!-- </div> -->
           <input type="submit" name="run" value="ALLOCATE >:)" id="run" />
+          <input onclick="exportXLSX();" type="button" name="excel" value="Export to XLSX" id="excel" />
         </form>
-        <input onclick="exportXLSX();" type="button" name="excel" value="Export to XLSX" id="excel" />
         <div>
           <input id="verbose" type="checkbox" name="verbose" checked/>
           <label for="verbose">Show info</label>

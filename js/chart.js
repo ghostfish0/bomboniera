@@ -1,4 +1,4 @@
-var context = document.getElementById('diversity-chart').getContext('2d');
+const context = document.getElementById('diversity-chart').getContext('2d');
 let datasets = {}
 let chart
 
