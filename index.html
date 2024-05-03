@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
-  <head> <meta
+  <head>
+    <meta
       http-equiv="Cache-Control"
       content="no-cache, no-store, must-revalidate"
     />
@@ -20,19 +21,31 @@
           <p>Residence Allocator</p>
         </div>
         <label for="myFile">
-          Upload data (<a href="./template.xlsx">download data template</a>): 
+          Upload data (<a href="./template.xlsx">download data template</a>):
         </label>
-        <form onsubmit="allocate();return false;" >
-          <input type="file" id="data-spreadsheet" name="data-spreadsheet" accept=".xlsx" required/>
+        <form onsubmit="allocate();return false;">
+          <input
+            type="file"
+            id="data-spreadsheet"
+            name="data-spreadsheet"
+            accept=".xlsx"
+            required
+          />
           <input type="submit" name="run" value="ALLOCATE >:)" id="run" />
-          <input onclick="exportXLSX();" type="button" name="excel" value="Export to XLSX" id="excel" />
+          <input
+            onclick="exportXLSX();"
+            type="button"
+            name="excel"
+            value="Export to XLSX"
+            id="excel"
+          />
         </form>
         <div>
-          <input id="verbose" type="checkbox" name="verbose" checked/>
+          <input id="verbose" type="checkbox" name="verbose" checked />
           <label for="verbose">Show info</label>
         </div>
         <div>
-          <input id="manual" type="checkbox" name="manual"/>
+          <input id="manual" type="checkbox" name="manual" />
           <label for="manual">Manual mode </label>
         </div>
         <div>
@@ -44,12 +57,21 @@
       </div>
       <div class="flex-item" id="main"></div>
     </div>
-    <script src="./js/xlsx.mini.min.js" integrity="sha512-NDQhXrK2pOCL18FV5/Nc+ya9Vz+7o8dJV1IGRwuuYuRMFhAR0allmjWdZCSHFLDYgMvXKyN2jXlSy2JJEmq+ZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- <script src="./js/xlsx.mini.min.js" integrity="sha512-NDQhXrK2pOCL18FV5/Nc+ya9Vz+7o8dJV1IGRwuuYuRMFhAR0allmjWdZCSHFLDYgMvXKyN2jXlSy2JJEmq+ZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+    <!-- use xlsx.full.min.js from version 0.20.2 -->
+    <script
+      lang="javascript"
+      src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"
+      integrity="sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script src="./js/dragndrop.js"></script>
     <script src="./js/data.js"></script>
     <script src="./js/table.js"></script>
-    <script src="./js/options.js"></script>
     <script type="module" src="./js/solver.js"></script>
     <script type="module" src="./js/index.js"></script>
     <script src="./js/chart.js"></script>

@@ -108,7 +108,7 @@ th div {
 }
 
 #main td > div:hover {
-  /* margin: 1px; */
+  margin: 1px;
   cursor: auto;
 }
 

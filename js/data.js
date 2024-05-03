@@ -1,61 +1,65 @@
-let verbose = false
-let shuffleImport = true
-let diversifySecondYears = true
-let diversifyFirstYears = false
-let forceNewResidence = true
-let seed = ""
+const verbose = false
+const shuffleImport = true
+const diversifySecondYears = true
+const diversifyFirstYears = false
+const forceNewResidence = true
+const seed = ""
 
 // residences info
-let residences_name = []
-let capacity = { "first year": [], "second year": [] }
-let residences_id = {}
+let rs_name = []
+let rs_capacity = { "first year": [], "second year": [] }
+let rs_id = {}
 
 // students info
 let st_name = []
-let tuple = []
+let st_tuple = []
 let st_region = []
-let sex = [] // 0 is female, 1 is male
-let is2ndYear = []
-let curr_res = []
-let orig_choices = []
+let st_sex = [] // 0 is female, 1 is male
+let st_is2ndYear = []
+let st_current_residence = []
+let st_choices = []
 
-// happiness matrix
-let happiness = []
-let soltable = {}
-let startid = 0;
-let endid = 0;
-let startid_1 = 0;
-let endid_1 = 0;
-let curr_regions = []
-let regions = {}
-let happiness_curr = 0;
-let diversity_curr = 0;
+// solver matrices
+let sl_happiness = []
+let sl_output = {}
+let ptr_begin_2nd = 0;
+let ptr_end_2nd = 0;
+let ptr_begin_1st = 0;
+let ptr_end_1st = 0;
+
+let regions = []
+let regions_expected = {}
+
+// let happiness_curr = 0;
+// let diversity_curr = 0;
+//
+
 let mostPopularResidence = -1
 let leastPopularResidence = -1
 
 function resetAll() {
-  residences_name = [];
-  capacity = { "first year": [], "second year": [] };
-  residences_id = {};
+  rs_name = [];
+  rs_capacity = { "first year": [], "second year": [] };
+  rs_id = {};
 
   st_name = [];
-  tuple = [];
+  st_tuple = [];
   st_region = [];
-  sex = [];
-  is2ndYear = [];
-  curr_res = [];
-  orig_choices = [];
+  st_sex = [];
+  st_is2ndYear = [];
+  st_current_residence = [];
+  st_choices = [];
 
-  happiness = [];
-  soltable = {};
-  startid = 0;
-  endid = 0;
-  startid_1 = 0;
-  endid_1 = 0;
-  curr_regions = [];
-  regions = {};
-  happiness_curr = 0;
-  diversity_curr = 0;
+  sl_happiness = [];
+  sl_output = {};
+  ptr_begin_2nd = 0;
+  ptr_end_2nd = 0;
+  ptr_begin_1st = 0;
+  ptr_end_1st = 0;
+  regions = [];
+  regions_expected = {};
+  // happiness_curr = 0;
+  // diversity_curr = 0;
   mostPopularResidence = -1;
   leastPopularResidence = -1;
 }
@@ -63,10 +67,10 @@ function resetAll() {
 async function importData(sheetName) {
   if (verbose) console.log("Importing data..." + sheetName)
 
-  while (residences_name.length) residences_name.pop()
-  for (let entry in residences_id) delete residences_id[entry]
-  while (capacity["first year"].length) capacity["first year"].pop()
-  while (capacity["second year"].length) capacity["second year"].pop()
+  while (rs_name.length) rs_name.pop()
+  for (let entry in rs_id) delete rs_id[entry]
+  while (rs_capacity["first year"].length) rs_capacity["first year"].pop()
+  while (rs_capacity["second year"].length) rs_capacity["second year"].pop()
 
   const file = document.getElementById('data-spreadsheet').files[0];
   const reader = new FileReader();
@@ -78,10 +82,10 @@ async function importData(sheetName) {
       let data = XLSX.utils.sheet_to_json(sheet)
       if (verbose) console.log("Residence data: ", data)
       data.forEach((entry) => {
-        residences_name.push(entry["residence"])
-        residences_id[entry["residence"]] = residences_name.length - 1
-        capacity["first year"].push(entry["first year"])
-        capacity["second year"].push(entry["second year"])
+        rs_name.push(entry["residence"])
+        rs_id[entry["residence"]] = rs_name.length - 1
+        rs_capacity["first year"].push(entry["first year"])
+        rs_capacity["second year"].push(entry["second year"])
       })
 
       // Handle second year data
@@ -89,58 +93,58 @@ async function importData(sheetName) {
       data = XLSX.utils.sheet_to_json(sheet)
       if (verbose) console.log("second year data: ", data)
       if (shuffleImport) shuffleArray(data)
-      startid = st_name.length
+      ptr_begin_2nd = st_name.length
       data.forEach((entry) => {
-        is2ndYear.push(true)
+        st_is2ndYear.push(true)
         st_name.push(entry.student)
-        tuple.push(+entry.tuple)
+        st_tuple.push(+entry.tuple)
         st_region.push(entry.region)
-        sex.push(sheetName == "male")
-        curr_res.push(entry["current residence"])
-        orig_choices.push(Object.entries(entry).filter(([key, _]) => +key >= 0).map(([_, value]) => value).reverse())
+        st_sex.push(sheetName == "male")
+        st_current_residence.push(entry["current residence"])
+        st_choices.push(Object.entries(entry).filter(([key, _]) => +key >= 0).map(([_, value]) => value).reverse())
 
-        happiness.push([])
-        Object.entries(entry).forEach(([key, value]) => { if (+key >= 0) happiness[happiness.length - 1][residences_id[value]] = +key })
+        sl_happiness.push([])
+        Object.entries(entry).forEach(([key, value]) => { if (+key >= 0) sl_happiness[sl_happiness.length - 1][rs_id[value]] = +key })
       })
-      endid = st_name.length
+      ptr_end_2nd = st_name.length
 
       // Handle first year data
-      startid_1 = st_name.length
+      ptr_begin_1st = st_name.length
       sheet = workbook.Sheets["info_" + (sheetName == "male" ? "primi" : "prime")]
       data = XLSX.utils.sheet_to_json(sheet)
       if (verbose) console.log("first year data: ", data)
       if (shuffleImport) shuffleArray(data)
       data.forEach((entry) => {
-        is2ndYear.push(false)
+        st_is2ndYear.push(false)
         st_name.push(entry.student)
-        tuple.push(false)
+        st_tuple.push(false)
         st_region.push(entry.region)
-        sex.push(sheetName == "male")
-        curr_res.push(false)
-        orig_choices.push([])
-        happiness.push(false)
+        st_sex.push(sheetName == "male")
+        st_current_residence.push(false)
+        st_choices.push([])
+        sl_happiness.push(false)
       })
-      endid_1 = st_name.length
+      ptr_end_1st = st_name.length
 
       if (forceNewResidence) {
-        for (let j = 0; j < capacity["second year"].length; j++) {
+        for (let j = 0; j < rs_capacity["second year"].length; j++) {
           let currtotalhappinessmax = 0
           let currtotalhappinessmin = 99999999
-          let restotalhappiness = happiness.slice(startid, endid).reduce((a, b) => a + b[j], 0)
+          let restotalhappiness = sl_happiness.slice(ptr_begin_2nd, ptr_end_2nd).reduce((a, b) => a + b[j], 0)
           if (!currtotalhappinessmax || restotalhappiness > currtotalhappinessmax)
             mostPopularResidence = j
           if (!currtotalhappinessmin || restotalhappiness < currtotalhappinessmin)
             leastPopularResidence = j
         }
-        for (let i = startid; i < endid; i++) {
-          if (residences_id[curr_res[i]] == mostPopularResidence)
-            happiness[i][mostPopularResidence] = -9999;
-          if (residences_id[curr_res[i]] == leastPopularResidence && happiness[i][leastPopularResidence] == 0)
-            happiness[i][leastPopularResidence] = -9999;
+        for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++) {
+          if (rs_id[st_current_residence[i]] == mostPopularResidence)
+            sl_happiness[i][mostPopularResidence] = -9999;
+          if (rs_id[st_current_residence[i]] == leastPopularResidence && sl_happiness[i][leastPopularResidence] == 0)
+            sl_happiness[i][leastPopularResidence] = -9999;
         }
       }
 
-      curr_regions = [...new Set(st_region)].sort()
+      regions = [...new Set(st_region)].sort()
 
       resolve()
     }
@@ -152,30 +156,30 @@ async function importData(sheetName) {
 }
 
 async function initDiversity(sheetName) {
-  regions[sheetName] = {}
-  stats = regions[sheetName]
+  regions_expected[sheetName] = {}
+  stats = regions_expected[sheetName]
   stats.overall = { "first year": {}, "second year": {} }
 
   if (verbose) console.log("init diversity", st_region)
 
 
   for (let i = 0; i < st_region.length; i++) {
-    if ((sheetName == "male" && !sex[i]) || (sheetName == "female" && sex[i])) continue
+    if ((sheetName == "male" && !st_sex[i]) || (sheetName == "female" && st_sex[i])) continue
     let rg = st_region[i]
-    let year = is2ndYear[i] ? "second year" : "first year"
+    let year = st_is2ndYear[i] ? "second year" : "first year"
     stats.overall[year][rg] = stats.overall[year][rg] + 1 || 1;
   }
   Object.keys(stats.overall).forEach((year) => {
-    let st_count = capacity[year].reduce((a, b) => a + b, 0);
-    curr_regions.forEach(rg => stats.overall[year][rg] /= st_count)
-    for (let i = 0; i < capacity[year].length; i++) {
-      res = residences_name[i]
+    let st_count = rs_capacity[year].reduce((a, b) => a + b, 0);
+    regions.forEach(rg => stats.overall[year][rg] /= st_count)
+    for (let i = 0; i < rs_capacity[year].length; i++) {
+      res = rs_name[i]
       stats[res] = stats[res] || {}
       stats[res][year] = {}
-      curr_regions.forEach(rg => {
+      regions.forEach(rg => {
         stats[res][year][rg] = {
-          min: Math.floor(capacity[year][i] * stats.overall[year][rg]),
-          max: Math.ceil(capacity[year][i] * stats.overall[year][rg])
+          min: Math.floor(rs_capacity[year][i] * stats.overall[year][rg]),
+          max: Math.ceil(rs_capacity[year][i] * stats.overall[year][rg])
         }
       })
     }
@@ -201,4 +205,4 @@ function splitmix32(a) {
   }
 }
 
-const prng = splitmix32(Date.now() * Math.random())
+const prng = splitmix32(Date.now())

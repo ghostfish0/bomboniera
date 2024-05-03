@@ -1,10 +1,10 @@
 const main = document.getElementById("main")
 
 function writetotable() {
-  const entries = Object.entries(soltable).map((entry) => entry[1]);
+  const entries = Object.entries(sl_output).map((entry) => entry[1]);
   const maxlength = Math.max(...entries.map(row => row.length))
   const rows = Array.from({ length: maxlength }).map((_, j) => entries.map(row => row[j]));
-  const id = [residences_name, ...rows.map(row => row.map(item => item === undefined || item === null || item === '' ? '' : item))];
+  const id = [rs_name, ...rows.map(row => row.map(item => item === undefined || item === null || item === '' ? '' : item))];
 
   let html = '<table><thead>' + Array.from(id[0], (x) => '<th><div>' + x + '</div></th>').join('') + '</thead>';
   for (let i = 1; i < id.length; i++) {
@@ -16,22 +16,22 @@ function writetotable() {
         continue;
       }
       html += '<td><div class=\''
-      html += is2ndYear[st] ? "info_secondi " : "info_primi " + " "
-      html += 'res_' + residences_name[j] + ' '
+      html += st_is2ndYear[st] ? "info_secondi " : "info_primi " + " "
+      html += 'res_' + rs_name[j] + ' '
       html += '\' id=\''
       html += st
       html += '\' title=\"'
-      html += orig_choices[st].join('&#013;')
+      html += st_choices[st].join('&#013;')
       html += '\">'
       // html += '<div class="name">'
       html += st_name[st]
       // html += '</div>'
       html += '<div class="info">'
       html += 'id: ' + st
-      html += (sex[st] ? " ♂️" : " ♀️") + " "
-      html += (is2ndYear[st] ? "🦅" : "🐣") + "<br>"
+      html += (st_sex[st] ? " ♂️" : " ♀️") + " "
+      html += (st_is2ndYear[st] ? "🦅" : "🐣") + "<br>"
       html += "🌎 " + st_region[st] + "<br>"
-      if (is2ndYear[st]) html += (happiness[st][j] > 0 ? "😆".repeat(happiness[st][j]) : "😭")
+      if (st_is2ndYear[st]) html += (sl_happiness[st][j] > 0 ? "😆".repeat(sl_happiness[st][j]) : "😭")
       html += '<br>'
       html += '</div>'
       html += '</div></td>'

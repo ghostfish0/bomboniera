@@ -34,8 +34,8 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   // let generals = lp.generals
 
   // creating the variables
-  for (let i = startid; i < endid; i++)
-    if (is2ndYear[i])
+  for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++)
+    if (st_is2ndYear[i])
       for (let j = 0; j < res_cnt; j++) {
         if (happiness[i][j] == 0) continue;
         variables.push({ // objective function
@@ -46,8 +46,8 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
       }
 
   // each student can only be assigned to one residence
-  for (let i = startid; i < endid; i++)
-    if (is2ndYear[i]) {
+  for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++)
+    if (st_is2ndYear[i]) {
       constraints.push({
         name: `x_${i}`,
         vars: [],
@@ -58,7 +58,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
         }
       })
       for (let j = 0; j < res_cnt; j++) {
-        constraints[i - startid].vars.push({
+        constraints[i - ptr_begin_2nd].vars.push({
           name: `x_${i}_${j}`,
           coef: 1
         })
@@ -76,8 +76,8 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
         lb: capacity["second year"][j]
       }
     })
-    for (let i = startid; i < endid; i++)
-      if (is2ndYear[i]) {
+    for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++)
+      if (st_is2ndYear[i]) {
         constraints[constraints.length - 1].vars.push({
           name: `x_${i}_${j}`,
           coef: tuple[i],
@@ -87,19 +87,19 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
 
   // each residence can only have students of a regional group as much as calculated
   if (diversifySecondYears) {
-    for (let r of curr_regions) {
+    for (let r of regions) {
       for (let j = 0; j < res_cnt; j++) {
         let st = {
-          name: `region_${r}_res_${residences_name[j]}`,
+          name: `region_${r}_res_${rs_name[j]}`,
           vars: [],
           bnds: {
             type: glpk.GLP_DB,
-            ub: regions[name][residences_name[j]]["second year"][r].max,
-            lb: Math.min(1, regions[name][residences_name[j]]["second year"][r].min - 1),
+            ub: regions_expected[name][rs_name[j]]["second year"][r].max,
+            lb: Math.min(1, regions_expected[name][rs_name[j]]["second year"][r].min - 1),
           }
         }
-        for (let i = startid; i < endid; i++)
-          if (is2ndYear[i] && st_region[i] == r) {
+        for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++)
+          if (st_is2ndYear[i] && st_region[i] == r) {
             st.vars.push({
               name: `x_${i}_${j}`,
               coef: tuple[i],
@@ -154,8 +154,8 @@ async function solve_primi(name, capacity, st_region, soltable) {
   // let generals = lp.generals
 
   // creating the variables
-  for (let i = startid_1; i < endid_1; i++)
-    if (!is2ndYear[i])
+  for (let i = ptr_begin_1st; i < ptr_end_1st; i++)
+    if (!st_is2ndYear[i])
       for (let j = 0; j < res_cnt; j++) {
         variables.push({ // objective function
           name: `x_${i}_${j}`,
@@ -165,8 +165,8 @@ async function solve_primi(name, capacity, st_region, soltable) {
       }
 
   // each student can only be assigned to one residence
-  for (let i = startid_1; i < endid_1; i++)
-    if (!is2ndYear[i]) {
+  for (let i = ptr_begin_1st; i < ptr_end_1st; i++)
+    if (!st_is2ndYear[i]) {
       constraints.push({
         name: `x_${i}`,
         vars: [],
@@ -177,7 +177,7 @@ async function solve_primi(name, capacity, st_region, soltable) {
         }
       })
       for (let j = 0; j < res_cnt; j++) {
-        constraints[i - startid_1].vars.push({
+        constraints[i - ptr_begin_1st].vars.push({
           name: `x_${i}_${j}`,
           coef: 1
         })
@@ -195,8 +195,8 @@ async function solve_primi(name, capacity, st_region, soltable) {
         lb: capacity["first year"][j]
       }
     })
-    for (let i = startid_1; i < endid_1; i++)
-      if (!is2ndYear[i]) {
+    for (let i = ptr_begin_1st; i < ptr_end_1st; i++)
+      if (!st_is2ndYear[i]) {
         constraints[constraints.length - 1].vars.push({
           name: `x_${i}_${j}`,
           coef: 1,
@@ -206,19 +206,19 @@ async function solve_primi(name, capacity, st_region, soltable) {
 
   // each residence can only have students of a regional group as much as calculated
   if (diversifyFirstYears) {
-    for (let r of curr_regions) {
+    for (let r of regions) {
       for (let j = 0; j < res_cnt; j++) {
         let st = {
-          name: `region_${r}_res_${residences_name[j]}`,
+          name: `region_${r}_res_${rs_name[j]}`,
           vars: [],
           bnds: {
             type: glpk.GLP_DB,
-            ub: regions[name][residences_name[j]]["first year"][r].max,
-            lb: regions[name][residences_name[j]]["first year"][r].min,
+            ub: regions_expected[name][rs_name[j]]["first year"][r].max,
+            lb: regions_expected[name][rs_name[j]]["first year"][r].min,
           }
         }
-        for (let i = startid_1; i < endid_1; i++)
-          if (is2ndYear[i] && st_region[i] == r) {
+        for (let i = ptr_begin_1st; i < ptr_end_1st; i++)
+          if (st_is2ndYear[i] && st_region[i] == r) {
             st.vars.push({
               name: `x_${i}_${j}`,
               coef: 1,
