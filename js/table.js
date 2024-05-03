@@ -1,6 +1,4 @@
-const main = document.getElementById("main")
-
-function writetotable() {
+function writetotable(name) {
   const entries = Object.entries(sl_output).map((entry) => entry[1]);
   const maxlength = Math.max(...entries.map(row => row.length))
   const rows = Array.from({ length: maxlength }).map((_, j) => entries.map(row => row[j]));
@@ -30,8 +28,8 @@ function writetotable() {
       html += 'id: ' + st
       html += (st_sex[st] ? " ♂️" : " ♀️") + " "
       html += (st_is2ndYear[st] ? "🦅" : "🐣") + "<br>"
-      html += "🌎 " + st_region[st] + "<br>"
-      if (st_is2ndYear[st]) html += (sl_happiness[st][j] > 0 ? "😆".repeat(sl_happiness[st][j]) : "😭")
+      html += "🌎 " + [... st_region[st]].join(" & ") + "<br>"
+      if (st_is2ndYear[st]) html += (sl_happiness[st][j] > 0 ? "😆".repeat(sl_happiness[st][j] + 1) : "😭")
       html += '<br>'
       html += '</div>'
       html += '</div></td>'
@@ -40,6 +38,5 @@ function writetotable() {
   }
   html += '</table>';
 
-  main.innerHTML = html;
-  return;
+  document.getElementById("main-" + name).innerHTML = html;
 }

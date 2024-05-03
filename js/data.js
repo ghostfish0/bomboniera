@@ -1,4 +1,4 @@
-const verbose = false
+const verbose = true
 const shuffleImport = true
 const diversifySecondYears = true
 const diversifyFirstYears = false
@@ -96,11 +96,11 @@ async function importData(sheetName) {
       ptr_begin_2nd = st_name.length
       data.forEach((entry) => {
         st_is2ndYear.push(true)
-        st_name.push(entry.student)
+        st_name.push(entry.student.split(", ").join("<br>"))
         st_tuple.push(+entry.tuple)
-        st_region.push(entry.region)
+        st_region.push(new Set(entry.region.split(", ")))
         st_sex.push(sheetName == "male")
-        st_current_residence.push(entry["current residence"])
+        st_current_residence.push(new Set(entry["current residence"].split(", ")))
         st_choices.push(Object.entries(entry).filter(([key, _]) => +key >= 0).map(([_, value]) => value).reverse())
 
         sl_happiness.push([])
@@ -118,7 +118,7 @@ async function importData(sheetName) {
         st_is2ndYear.push(false)
         st_name.push(entry.student)
         st_tuple.push(false)
-        st_region.push(entry.region)
+        st_region.push(new Set(entry.region.split(", ")))
         st_sex.push(sheetName == "male")
         st_current_residence.push(false)
         st_choices.push([])
@@ -127,24 +127,20 @@ async function importData(sheetName) {
       ptr_end_1st = st_name.length
 
       if (forceNewResidence) {
+        let restotalhappiness = []  
         for (let j = 0; j < rs_capacity["second year"].length; j++) {
-          let currtotalhappinessmax = 0
-          let currtotalhappinessmin = 99999999
-          let restotalhappiness = sl_happiness.slice(ptr_begin_2nd, ptr_end_2nd).reduce((a, b) => a + b[j], 0)
-          if (!currtotalhappinessmax || restotalhappiness > currtotalhappinessmax)
-            mostPopularResidence = j
-          if (!currtotalhappinessmin || restotalhappiness < currtotalhappinessmin)
-            leastPopularResidence = j
+          restotalhappiness.push(sl_happiness.slice(ptr_begin_2nd, ptr_end_2nd).reduce((a, b) => a + b[j], 0))
         }
+        mostPopularResidence = restotalhappiness.reduce((imax, current, i, a) => current > a[imax] ? i : imax, 0);
+        leastPopularResidence = restotalhappiness.reduce((imin, current, i, a) => current < a[imin] ? i : imin, 0);
         for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++) {
-          if (rs_id[st_current_residence[i]] == mostPopularResidence)
-            sl_happiness[i][mostPopularResidence] = -9999;
-          if (rs_id[st_current_residence[i]] == leastPopularResidence && sl_happiness[i][leastPopularResidence] == 0)
-            sl_happiness[i][leastPopularResidence] = -9999;
+          if (st_current_residence[i].has(mostPopularResidence))
+            sl_happiness[i][mostPopularResidence] = 0;
+          if (st_current_residence[i].has(leastPopularResidence) && sl_happiness[i][leastPopularResidence] == 0)
+            sl_happiness[i][leastPopularResidence] = 0;
         }
       }
-
-      regions = [...new Set(st_region)].sort()
+      regions = [...new Set(st_region.map(set => [... set]))].sort()
 
       resolve()
     }

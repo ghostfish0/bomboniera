@@ -1,7 +1,7 @@
 async function initDragnDrop() {
   if (verbose) console.log("initDragDrop")
 
-  let cells = document.querySelectorAll('#main td div');
+  let cells = document.querySelectorAll('.main td div');
 
   document.getElementById('manual').checked = false;
   document.getElementById('manual').addEventListener('change', () => { // toggle draggable

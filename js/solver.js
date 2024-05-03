@@ -5,11 +5,11 @@ async function handleSolution(name, sol, soltable) {
   soltable = await mergeSols(soltable, flatten(sol))
   // document.getElementById("happiness-curr").innerHTML = +document.getElementById("happiness-curr").innerHTML + sol.result.z
   // document.getElementById("happiness-max").innerHTML = +document.getElementById("happiness-max").innerHTML + sol.result.z
-  writetotable()
+  writetotable(name)
 }
 
 async function solve_secondi(name, happiness, capacity, tuple, soltable) {
-  if (verbose) console.log("Solving..." + name)
+  if (verbose) console.log("Solving secondi..." + name)
 
   const glpk = await GLPK();
 
@@ -275,10 +275,6 @@ function flatten(sol) {
       return acc;
     }, {})
   return table;
-}
-
-function chiSquare(observed, expected) {
-  return Math.pow(observed - expected, 2) / expected;
 }
 
 export default general_solver;
