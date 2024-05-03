@@ -41,7 +41,6 @@ function initChart() {
     type: 'bar',
     data: {
       labels: residences_name,
-      // labels: [...residences_name, "ALL"],
       datasets: Object.values(datasets),
     },
     options: {
