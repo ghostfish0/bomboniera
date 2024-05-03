@@ -85,7 +85,7 @@ th div {
   height: 5rem;
 }
 
-.main {
+#main {
   overflow-x: auto;
   white-space: nowrap;
   /* justify-content: center; */
@@ -93,12 +93,12 @@ th div {
   flex-direction: column;
 }
 
-.main th > div {
+#main th > div {
   padding: 10px;
   border: 2px solid var(--fg);
 }
 
-.main td > div {
+#main td > div {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -109,12 +109,12 @@ th div {
   height: 100%;
 }
 
-.main td > div[draggable=true]:hover {
+#main td > div[draggable=true]:hover {
   transform: scale(1.1);
   cursor: move;
 }
 
-.main td > div.over {
+#main td > div.over {
   border: 3px dotted var(--fg);
 }
 

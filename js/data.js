@@ -1,9 +1,11 @@
 const verbose = true
 const shuffleImport = true
-const diversifySecondYears = true
+const diversifySecondYears = false
 const diversifyFirstYears = false
 const forceNewResidence = true
 const seed = ""
+const allocateSecondYears = true
+const allocateFirstYears = false
 
 // residences info
 let rs_name = []
@@ -22,6 +24,7 @@ let st_choices = []
 // solver matrices
 let sl_happiness = []
 let sl_output = {}
+let sl_history = []
 let ptr_begin_2nd = 0;
 let ptr_end_2nd = 0;
 let ptr_begin_1st = 0;
@@ -82,6 +85,8 @@ async function importData(sheetName) {
       let data = XLSX.utils.sheet_to_json(sheet)
       if (verbose) console.log("Residence data: ", data)
       data.forEach((entry) => {
+        // if (!rs_name.includes(entry["residence"])){
+        // } 
         rs_name.push(entry["residence"])
         rs_id[entry["residence"]] = rs_name.length - 1
         rs_capacity["first year"].push(entry["first year"])
@@ -127,7 +132,7 @@ async function importData(sheetName) {
       ptr_end_1st = st_name.length
 
       if (forceNewResidence) {
-        let restotalhappiness = []  
+        let restotalhappiness = []
         for (let j = 0; j < rs_capacity["second year"].length; j++) {
           restotalhappiness.push(sl_happiness.slice(ptr_begin_2nd, ptr_end_2nd).reduce((a, b) => a + b[j], 0))
         }
@@ -140,7 +145,7 @@ async function importData(sheetName) {
             sl_happiness[i][leastPopularResidence] = 0;
         }
       }
-      regions = [...new Set(st_region.map(set => [... set]))].sort()
+      regions = [...new Set(st_region.map(set => [...set]).flat())].sort()
 
       resolve()
     }
@@ -161,9 +166,10 @@ async function initDiversity(sheetName) {
 
   for (let i = 0; i < st_region.length; i++) {
     if ((sheetName == "male" && !st_sex[i]) || (sheetName == "female" && st_sex[i])) continue
-    let rg = st_region[i]
-    let year = st_is2ndYear[i] ? "second year" : "first year"
-    stats.overall[year][rg] = stats.overall[year][rg] + 1 || 1;
+    for (let rg of st_region[i]) {
+      let year = st_is2ndYear[i] ? "second year" : "first year"
+      stats.overall[year][rg] = stats.overall[year][rg] + 1 || 1;
+    }
   }
   Object.keys(stats.overall).forEach((year) => {
     let st_count = rs_capacity[year].reduce((a, b) => a + b, 0);

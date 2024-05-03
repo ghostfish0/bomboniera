@@ -1,11 +1,13 @@
 import GLPK from '../dist/index.js';
 
-async function handleSolution(name, sol, soltable) {
-  if (verbose) console.log("Handling solution..." + name, soltable, flatten(sol))
-  soltable = await mergeSols(soltable, flatten(sol))
+async function handleSolution(sol) {
+  if (verbose) console.log("Handling solution...")
+  sol = flatten(sol)
+  sl_history.push(sol)
+  sl_output = await mergeSols(sl_output, sol)
+  writetotable()
   // document.getElementById("happiness-curr").innerHTML = +document.getElementById("happiness-curr").innerHTML + sol.result.z
   // document.getElementById("happiness-max").innerHTML = +document.getElementById("happiness-max").innerHTML + sol.result.z
-  writetotable(name)
 }
 
 async function solve_secondi(name, happiness, capacity, tuple, soltable) {
@@ -37,7 +39,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++)
     if (st_is2ndYear[i])
       for (let j = 0; j < res_cnt; j++) {
-        if (happiness[i][j] == 0) continue;
+        if (happiness[i][j] == 0 || !happiness[i][j]) continue;
         variables.push({ // objective function
           name: `x_${i}_${j}`,
           coef: happiness[i][j],
@@ -89,46 +91,49 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   if (diversifySecondYears) {
     for (let r of regions) {
       for (let j = 0; j < res_cnt; j++) {
+        let UB = regions_expected[name][rs_name[j]]["second year"][r].max + 1
+        let LB = Math.min(1, regions_expected[name][rs_name[j]]["second year"][r].min - 1)
+        LB = 0
         let st = {
           name: `region_${r}_res_${rs_name[j]}`,
           vars: [],
           bnds: {
             type: glpk.GLP_DB,
-            ub: regions_expected[name][rs_name[j]]["second year"][r].max,
-            lb: Math.min(1, regions_expected[name][rs_name[j]]["second year"][r].min - 1),
+            ub: UB,
+            lb: LB
           }
         }
         for (let i = ptr_begin_2nd; i < ptr_end_2nd; i++)
-          if (st_is2ndYear[i] && st_region[i] == r) {
+          if (st_is2ndYear[i] && st_region[i].has(r)) {
             st.vars.push({
               name: `x_${i}_${j}`,
               coef: tuple[i],
             })
           }
-        constraints.push(st)
+        console.log(st)
+        // constraints.push(st)
       }
     }
   }
   const opt = {
     // msglev: verbose ? glpk.GLP_MSG_ALL : glpk.GLP_MSG_OFF
-    msglev: glpk.GLP_MSG_OFF,
-    // msglev: glpk.GLP_MSG_DBG,
+    // msglev: glpk.GLP_MSG_ERR,
+    msglev: glpk.GLP_MSG_DBG,
   };
 
-
   await glpk.solve(lp, opt)
-    .then(sol => (async () => { await handleSolution(name, sol, soltable); })())
+    .then(sol => (async () => { await handleSolution(sol); })())
     .catch(err => {
       console.log("SOLUTION ERROR")
       console.log(err)
     });
 
-  // (async () => { console.log(await glpk.write(lp)) })()
+  (async () => { console.log(await glpk.write(lp)) })()
 
 }
 
 
-async function solve_primi(name, capacity, st_region, soltable) {
+async function solve_primi(name, capacity, st_region) {
   if (verbose) console.log("Solving primi..." + name)
 
   const glpk = await GLPK();
@@ -236,20 +241,18 @@ async function solve_primi(name, capacity, st_region, soltable) {
 
 
   await glpk.solve(lp, opt)
-    .then(sol => (async () => { await handleSolution(name, sol, soltable); })())
+    .then(sol => (async () => { await handleSolution(sol, soltable); })())
     .catch(err => {
       console.log("SOLUTION ERROR")
       console.log(err)
     });
 
-  // (async () => { console.log(await glpk.write(lp)) })()
-
-
+  (async () => { console.log(await glpk.write(lp)) })()
 }
 
 async function general_solver(name, happiness, capacity, tuple, region, soltable) {
-  await solve_secondi(name, happiness, capacity, tuple, soltable)
-  await solve_primi(name, capacity, region, soltable)
+  if (allocateSecondYears) await solve_secondi(name, happiness, capacity, tuple, soltable)
+  if (allocateFirstYears) await solve_primi(name, capacity, region, soltable)
 }
 
 async function mergeSols(obj1, obj2) {
@@ -261,6 +264,10 @@ async function mergeSols(obj1, obj2) {
       obj1[key] = obj2[key];
     }
   }
+  obj1 = Object.keys(obj1).sort().reduce((result, key) => {
+    result[key] = obj1[key];
+    return result;
+  }, {});
   if (verbose) console.log("Finished merging...\n", obj1)
   return obj1;
 }
@@ -271,7 +278,8 @@ function flatten(sol) {
     .map(([key]) => key.match(/x_(\d+)_(\d+)/)
       .slice(1).map(Number))
     .reduce((acc, [key, value]) => {
-      (acc[value] = acc[value] || []).push(+key)
+      (acc[rs_name[value]] = acc[rs_name[value]] || []).push(+key)
+      console.log(value, rs_name[value])
       return acc;
     }, {})
   return table;
