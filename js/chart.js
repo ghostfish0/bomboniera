@@ -27,7 +27,6 @@ function calculateChart() {
       if (!datasets[r].data[j]) continue
       s += datasets[r].data[j]
     }
-    console.log(s)
     for (let r of regions) {
       datasets[r].data[j] /= s
     }

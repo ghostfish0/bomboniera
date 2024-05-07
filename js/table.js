@@ -1,10 +1,8 @@
 function writetotable() {
   const entries = Object.entries(sl_output).map((entry) => entry[1]);
-  console.log(entries)
   const maxlength = Math.max(...entries.map(row => row.length))
   const rows = Array.from({ length: maxlength }).map((_, j) => entries.map(row => row[j]));
   const id = [Object.keys(sl_output), ...rows.map(row => row.map(item => item === undefined || item === null || item === '' ? '' : item))];
-  console.log(id)
 
   let html = '<table><thead>' + Array.from(id[0], (x) => '<th><div>' + x + '</div></th>').join('') + '</thead>';
   for (let i = 1; i < id.length; i++) {

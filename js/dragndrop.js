@@ -1,7 +1,7 @@
 async function initDragnDrop() {
   if (verbose) console.log("initDragDrop")
 
-  let cells = document.querySelectorAll('.main td div');
+  let cells = document.querySelectorAll('#main td div');
 
   document.getElementById('manual').checked = false;
   document.getElementById('manual').addEventListener('change', () => { // toggle draggable
@@ -52,6 +52,7 @@ async function initDragnDrop() {
       let res1id = rs_id[res1.split('res_')[1]];
       let i0 = sl_output[res0id].indexOf(id0);
       let i1 = sl_output[res1id].indexOf(id1);
+
 
       [sl_output[res0id][i0], sl_output[res1id][i1]] = [sl_output[res1id][i1], sl_output[res0id][i0]];
 

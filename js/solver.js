@@ -117,8 +117,8 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
   }
   const opt = {
     // msglev: verbose ? glpk.GLP_MSG_ALL : glpk.GLP_MSG_OFF
-    // msglev: glpk.GLP_MSG_ERR,
-    msglev: glpk.GLP_MSG_DBG,
+    msglev: glpk.GLP_MSG_ERR,
+    // msglev: glpk.GLP_MSG_DBG,
   };
 
   await glpk.solve(lp, opt)
@@ -128,7 +128,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
       console.log(err)
     });
 
-  (async () => { console.log(await glpk.write(lp)) })()
+  // (async () => { console.log(await glpk.write(lp)) })()
 
 }
 
@@ -265,7 +265,7 @@ async function mergeSols(obj1, obj2) {
     }
   }
   obj1 = Object.keys(obj1).sort().reduce((result, key) => {
-    result[key] = obj1[key];
+    result[key] = obj1[key].sort((a, b) => {return (st_name[a] < st_name[b] ? -1 : (st_name[a] != st_name[b]))});
     return result;
   }, {});
   if (verbose) console.log("Finished merging...\n", obj1)
@@ -279,7 +279,6 @@ function flatten(sol) {
       .slice(1).map(Number))
     .reduce((acc, [key, value]) => {
       (acc[rs_name[value]] = acc[rs_name[value]] || []).push(+key)
-      console.log(value, rs_name[value])
       return acc;
     }, {})
   return table;

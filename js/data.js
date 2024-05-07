@@ -1,4 +1,4 @@
-const verbose = true
+const verbose = false
 const shuffleImport = true
 const diversifySecondYears = false
 const diversifyFirstYears = false
