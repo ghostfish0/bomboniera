@@ -43,8 +43,8 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
         if (happiness[i][j] == 0 || !happiness[i][j]) continue;
         variables.push({ // objective function
           name: `x_${i}_${j}`,
-          // coef: (tuple[i] > 1? 1.5 : 1) * happiness[i][j],
-          coef: happiness[i][j],
+          coef: (tuple[i] > 1? 1.3 : 1) * happiness[i][j],
+          // coef: happiness[i][j],
         })
         binaries.push(`x_${i}_${j}`)
       }
