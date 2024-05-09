@@ -33,7 +33,7 @@ function calculateChart() {
   }
 }
 function updateChart() {
-  console.log("update chart")
+  if (verbose) console.log("update chart")
   calculateChart()
   chart.data.datasets = Object.values(datasets)
   chart.update('none')

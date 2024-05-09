@@ -45,28 +45,25 @@ async function initDragnDrop() {
       let id0 = +this.id;
       let id1 = +dragSrcEl.id;
 
-      let res0 = Array.from(this.classList).find(cls => cls.startsWith('res_'));
-      let res1 = e.dataTransfer.getData('text/res');
-
-      let res0id = rs_id[res0.split('res_')[1]];
-      let res1id = rs_id[res1.split('res_')[1]];
-      let i0 = sl_output[res0id].indexOf(id0);
-      let i1 = sl_output[res1id].indexOf(id1);
+      let res0 = Array.from(this.classList).find(cls => cls.startsWith('res_')).split('res_')[1];
+      let res1 = e.dataTransfer.getData('text/res').split('res_')[1];
+      let i0 = sl_output[res0].indexOf(id0);
+      let i1 = sl_output[res1].indexOf(id1);
 
 
-      [sl_output[res0id][i0], sl_output[res1id][i1]] = [sl_output[res1id][i1], sl_output[res0id][i0]];
+      [sl_output[res0][i0], sl_output[res1][i1]] = [sl_output[res1][i1], sl_output[res0][i0]];
 
       let html0 = "";
       html0 += (st_sex[id1] ? " ♂️" : " ♀️") + " ";
       html0 += (st_is2ndYear[id1] ? "🦅" : "🐣") + "<br>";
       html0 += "🌎 " + st_region[id1] + '<br>';
-      if (st_is2ndYear[id1]) html0 += (sl_happiness[id1][res0id] > 0 ? "😆".repeat(sl_happiness[id1][res0id]) : sl_happiness[id1][res0id] < 0 ? "🚫" : "😭")
+      if (st_is2ndYear[id1]) html0 += (sl_happiness[id1][res0] > 0 ? "😆".repeat(sl_happiness[id1][res0]) : sl_happiness[id1][res0] < 0 ? "🚫" : "😭")
       html0 += '<br>'
       let html1 = "";
       html1 += (st_sex[id0] ? " ♂️" : " ♀️") + " ";
       html1 += (st_is2ndYear[id0] ? "🦅" : "🐣") + "<br>";
       html1 += "🌎 " + st_region[id0] + '<br>';
-      if (st_is2ndYear[id0]) html1 += (sl_happiness[id0][res1id] > 0 ? "😆".repeat(sl_happiness[id0][res1id]) : sl_happiness[id0][res1id] < 0 ? "🚫" : "😭")
+      if (st_is2ndYear[id0]) html1 += (sl_happiness[id0][res1] > 0 ? "😆".repeat(sl_happiness[id0][res1]) : sl_happiness[id0][res1] < 0 ? "🚫" : "😭")
       html1 += '<br>'
 
       dragSrcEl.innerHTML = this.innerHTML;
