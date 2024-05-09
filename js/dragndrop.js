@@ -50,20 +50,27 @@ async function initDragnDrop() {
       let i0 = sl_output[res0].indexOf(id0);
       let i1 = sl_output[res1].indexOf(id1);
 
-
       [sl_output[res0][i0], sl_output[res1][i1]] = [sl_output[res1][i1], sl_output[res0][i0]];
 
       let html0 = "";
+      html0 += 'id: ' + id1
       html0 += (st_sex[id1] ? " ♂️" : " ♀️") + " ";
       html0 += (st_is2ndYear[id1] ? "🦅" : "🐣") + "<br>";
-      html0 += "🌎 " + st_region[id1] + '<br>';
-      if (st_is2ndYear[id1]) html0 += (sl_happiness[id1][res0] > 0 ? "😆".repeat(sl_happiness[id1][res0]) : sl_happiness[id1][res0] < 0 ? "🚫" : "😭")
+      html0 += "🌎 " + [...st_region[id1]].join(" & ") + "<br>"
+      if (st_is2ndYear[id1]) {
+        let happi = st_choices[id1].length - st_choices[id1].indexOf(res0)
+        html0 += (happi > 1 ? "😆".repeat(happi) : "😭")
+      }
       html0 += '<br>'
       let html1 = "";
+      html1 += 'id: ' + id0
       html1 += (st_sex[id0] ? " ♂️" : " ♀️") + " ";
       html1 += (st_is2ndYear[id0] ? "🦅" : "🐣") + "<br>";
-      html1 += "🌎 " + st_region[id0] + '<br>';
-      if (st_is2ndYear[id0]) html1 += (sl_happiness[id0][res1] > 0 ? "😆".repeat(sl_happiness[id0][res1]) : sl_happiness[id0][res1] < 0 ? "🚫" : "😭")
+      html1 += "🌎 " + [...st_region[id0]].join(" & ") + "<br>"
+      if (st_is2ndYear[id0]) {
+        let happi = st_choices[id0].length - st_choices[id0].indexOf(res1)
+        html1 += (happi > 1 ? "😆".repeat(happi) : "😭")
+      }
       html1 += '<br>'
 
       dragSrcEl.innerHTML = this.innerHTML;
@@ -79,8 +86,9 @@ async function initDragnDrop() {
       e.currentTarget.classList.add(res0);
       e.currentTarget.classList.remove(res1);
       e.currentTarget.querySelector('.info').innerHTML = html0;
-      
+
       updateChart()
+      console.log(calculateZ())
     }
     return false;
   }
@@ -96,3 +104,13 @@ async function initDragnDrop() {
 
 }
 
+function calculateZ() {
+  let z = 0
+  for (let res in sl_output) {
+    sl_output[res].forEach(e => {
+      // console.log(e, res, st_choices[e].length - st_choices[e].indexOf(res))
+      z += st_choices[e].length - st_choices[e].indexOf(res) - 1
+    });
+  }
+  return z
+}
