@@ -27,7 +27,6 @@ function toggleShowAdditionalInfo(ee) {
 function SolToXLSX() {
   let wb = XLSX.utils.book_new();
 
-  // Create an array of arrays for the worksheet data
   let ws_data = [];
 
   for (let key in sl_output) {

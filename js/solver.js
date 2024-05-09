@@ -2,6 +2,7 @@ import GLPK from '../dist/index.js';
 
 async function handleSolution(sol) {
   if (verbose) console.log("Handling solution...")
+  console.log("z", sol.result.z)
   sol = flatten(sol)
   sl_history.push(sol)
   sl_output = await mergeSols(sl_output, sol)
@@ -42,6 +43,7 @@ async function solve_secondi(name, happiness, capacity, tuple, soltable) {
         if (happiness[i][j] == 0 || !happiness[i][j]) continue;
         variables.push({ // objective function
           name: `x_${i}_${j}`,
+          // coef: (tuple[i] > 1? 1.5 : 1) * happiness[i][j],
           coef: happiness[i][j],
         })
         binaries.push(`x_${i}_${j}`)
